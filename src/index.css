@@ -172,4 +172,112 @@
   .tag-factura { @apply bg-green-50 text-green-700 border-green-200; }
   .tag-ticket { @apply bg-blue-50 text-blue-700 border-blue-200; }
   .tag-nota { @apply bg-purple-50 text-purple-700 border-purple-200; }
+
+  /* Enhanced 2025 animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  /* Hero background with animated gradient */
+  .hero-gradient {
+    background: linear-gradient(135deg, 
+      hsl(217 100% 97%) 0%,
+      hsl(210 29% 97%) 50%,
+      hsl(217 100% 97%) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, hsl(217 100% 52% / 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, hsl(217 100% 52% / 0.05) 0%, transparent 50%);
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+  
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1;
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .card-hover:hover {
+    box-shadow: var(--shadow-large);
+  }
+  
+  /* Parallax text */
+  .parallax-text {
+    transform: translateZ(0);
+    animation: parallax-float 8s ease-in-out infinite;
+  }
+  
+  @keyframes parallax-float {
+    0%, 100% { transform: translateY(0px) translateZ(0); }
+    50% { transform: translateY(-5px) translateZ(0); }
+  }
+  
+  /* Testimonial card */
+  .testimonial-card {
+    @apply bg-card border border-border rounded-2xl p-6 relative;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+  }
+  
+  .testimonial-card:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+  
+  /* Staggered animation for cards */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  
+  /* Modal backdrop */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  /* Modal content */
+  .modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+  }
+  
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Navbar blur effect */
+  .navbar-blur {
+    backdrop-filter: blur(20px);
+    background: hsl(var(--background) / 0.8);
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+  }
 }
