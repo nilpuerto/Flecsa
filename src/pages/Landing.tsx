@@ -41,9 +41,9 @@ const Landing = () => {
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
         {/* Floating geometric shapes */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full animate-float"></div>
-        <div className="absolute bottom-32 right-20 w-24 h-24 bg-primary/5 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-primary/8 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-t from-primary/30 via-primary/10 to-transparent"></div>
+        <div className="absolute bottom-32 right-20 w-24 h-24 rounded-full bg-gradient-to-t from-primary/25 via-primary/8 to-transparent" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 right-1/4 w-16 h-16 rounded-full bg-gradient-to-t from-primary/20 via-primary/5 to-transparent" style={{ animationDelay: '2s' }}></div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto fade-in">
@@ -55,8 +55,8 @@ const Landing = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground leading-tight mb-8 tracking-tight">
-              <span className="block">Menos caos.</span>
-              <span className="block text-primary">Más claridad.</span>
+              <span className="block">Organiza tus documentos.</span>
+              <span className="block text-primary">Encuentra lo que necesitas en segundos.</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 leading-relaxed max-w-3xl mx-auto">
@@ -304,6 +304,26 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Motivational Section */}
+      <section className="py-32 relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-accent/5">
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-40 h-40 rounded-full bg-gradient-to-t from-primary/20 via-primary/5 to-transparent"></div>
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full bg-gradient-to-t from-primary/15 via-primary/3 to-transparent"></div>
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <h2 className="text-6xl md:text-8xl font-bold text-foreground mb-8 leading-tight">
+              Menos caos.
+              <br />
+              <span className="text-primary">Más claridad.</span>
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Tu tiempo es valioso. Zerlo lo respeta.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
@@ -319,9 +339,11 @@ const Landing = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="testimonial-card fade-in stagger-1">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center mr-4">
-                  <span className="text-primary font-semibold">M</span>
-                </div>
+                <img 
+                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=48&h=48&fit=crop&crop=face&auto=format&q=80" 
+                  alt="María González" 
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
                 <div>
                   <h4 className="font-semibold text-foreground">María González</h4>
                   <p className="text-sm text-muted-foreground">Autónoma</p>
@@ -340,9 +362,11 @@ const Landing = () => {
             
             <div className="testimonial-card fade-in stagger-2">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center mr-4">
-                  <span className="text-primary font-semibold">J</span>
-                </div>
+                <img 
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face&auto=format&q=80" 
+                  alt="Jorge Martín" 
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
                 <div>
                   <h4 className="font-semibold text-foreground">Jorge Martín</h4>
                   <p className="text-sm text-muted-foreground">Freelance</p>
@@ -361,9 +385,11 @@ const Landing = () => {
             
             <div className="testimonial-card fade-in stagger-3">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center mr-4">
-                  <span className="text-primary font-semibold">A</span>
-                </div>
+                <img 
+                  src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=48&h=48&fit=crop&crop=face&auto=format&q=80" 
+                  alt="Ana Ruiz" 
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
                 <div>
                   <h4 className="font-semibold text-foreground">Ana Ruiz</h4>
                   <p className="text-sm text-muted-foreground">Consultora</p>

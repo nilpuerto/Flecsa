@@ -18,17 +18,21 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     e.preventDefault();
     // TODO: Implement authentication with Supabase
     console.log("Form submitted:", { email, password, name, isLogin });
+    // Redirect to upload page after successful login/register
+    window.location.href = "/app/upload";
   };
 
   const handleGoogleSignIn = () => {
     // TODO: Implement Google authentication with Supabase
     console.log("Google sign in");
+    // Redirect to upload page after successful login
+    window.location.href = "/app/upload";
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div 
-        className="modal-content fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-2xl p-8 w-full max-w-md mx-4 z-50"
+        className="bg-background rounded-2xl p-8 w-full max-w-md animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
