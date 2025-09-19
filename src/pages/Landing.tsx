@@ -40,10 +40,10 @@ const Landing = () => {
       <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/30">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
-        {/* Modern 2025 gradient glow from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent"></div>
-        <div className="absolute bottom-0 left-1/4 right-1/4 h-80 bg-gradient-to-t from-primary/30 via-primary/8 to-transparent blur-xl"></div>
-        <div className="absolute bottom-0 left-1/3 right-1/3 h-64 bg-gradient-to-t from-primary/40 via-primary/10 to-transparent blur-2xl"></div>
+        {/* Floating geometric shapes */}
+        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-t from-primary/30 via-primary/10 to-transparent"></div>
+        <div className="absolute bottom-32 right-20 w-24 h-24 rounded-full bg-gradient-to-t from-primary/25 via-primary/8 to-transparent" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 right-1/4 w-16 h-16 rounded-full bg-gradient-to-t from-primary/20 via-primary/5 to-transparent" style={{ animationDelay: '2s' }}></div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto fade-in">
@@ -150,8 +150,8 @@ const Landing = () => {
       {/* Visual Impact Section */}
       <section className="py-32 bg-gradient-to-b from-background to-muted/50 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-primary/15 via-primary/3 to-transparent"></div>
-          <div className="absolute bottom-0 left-1/6 right-1/6 h-64 bg-gradient-to-t from-primary/25 via-primary/5 to-transparent blur-xl"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl"></div>
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
@@ -307,9 +307,8 @@ const Landing = () => {
       {/* Motivational Section */}
       <section className="py-32 relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-accent/5">
         <div className="absolute inset-0">
-          <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-primary/25 via-primary/8 to-transparent"></div>
-          <div className="absolute bottom-0 left-1/5 right-1/5 h-72 bg-gradient-to-t from-primary/35 via-primary/10 to-transparent blur-xl"></div>
-          <div className="absolute bottom-0 left-1/3 right-1/3 h-48 bg-gradient-to-t from-primary/45 via-primary/15 to-transparent blur-2xl"></div>
+          <div className="absolute top-10 left-10 w-40 h-40 rounded-full bg-gradient-to-t from-primary/20 via-primary/5 to-transparent"></div>
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full bg-gradient-to-t from-primary/15 via-primary/3 to-transparent"></div>
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
