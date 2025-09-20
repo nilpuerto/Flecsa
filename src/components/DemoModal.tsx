@@ -17,7 +17,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
     setShowResults(true);
     setTimeout(() => {
       setCurrentStep(1);
-    }, 1000);
+    }, 3000);
   };
 
   const resetDemo = () => {
@@ -98,38 +98,41 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
 
                 {showResults && (
                   <div className="mt-6 space-y-3 animate-fade-in">
-                    <div className="text-sm font-medium text-primary">Resultados encontrados:</div>
-                    <div className="space-y-2">
-                      <div className="bg-card border border-primary/20 rounded-lg p-3 flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-primary" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-foreground">Ticket_Gasolina_15mar.jpg</div>
-                          <div className="text-xs text-muted-foreground">45,67€ - 15 marzo 2024</div>
+                    <div className="text-sm font-medium text-primary opacity-0 animate-[fade-in_0.8s_ease-out_0.3s_forwards]">Buscando en tus documentos...</div>
+                    <div className="opacity-0 animate-[fade-in_0.8s_ease-out_1.2s_forwards]">
+                      <div className="text-sm font-medium text-primary mb-3">Resultados encontrados:</div>
+                      <div className="space-y-2">
+                        <div className="bg-card border border-primary/20 rounded-lg p-3 flex items-center gap-3 opacity-0 animate-[fade-in_0.6s_ease-out_1.5s_forwards]">
+                          <FileText className="w-5 h-5 text-primary" />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-foreground">Ticket_Gasolina_15mar.jpg</div>
+                            <div className="text-xs text-muted-foreground">45,67€ - 15 marzo 2024</div>
+                          </div>
+                          <Check className="w-4 h-4 text-green-500" />
                         </div>
-                        <Check className="w-4 h-4 text-green-500" />
-                      </div>
-                      <div className="bg-card border border-primary/20 rounded-lg p-3 flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-primary" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-foreground">Factura_Cepsa_08mar.pdf</div>
-                          <div className="text-xs text-muted-foreground">52,30€ - 8 marzo 2024</div>
+                        <div className="bg-card border border-primary/20 rounded-lg p-3 flex items-center gap-3 opacity-0 animate-[fade-in_0.6s_ease-out_1.8s_forwards]">
+                          <FileText className="w-5 h-5 text-primary" />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-foreground">Factura_Cepsa_08mar.pdf</div>
+                            <div className="text-xs text-muted-foreground">52,30€ - 8 marzo 2024</div>
+                          </div>
+                          <Check className="w-4 h-4 text-green-500" />
                         </div>
-                        <Check className="w-4 h-4 text-green-500" />
                       </div>
-                    </div>
-                    <div className="bg-primary/10 rounded-lg p-3 text-center">
-                      <div className="text-sm font-medium text-primary">Total gastado en combustible: 97,97€</div>
+                      <div className="bg-primary/10 rounded-lg p-3 text-center mt-3 opacity-0 animate-[fade-in_0.6s_ease-out_2.1s_forwards]">
+                        <div className="text-sm font-medium text-primary">Total gastado en combustible: 97,97€</div>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
             </div>
           ) : (
-            <div className="text-center space-y-6 py-12">
-              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+            <div className="text-center space-y-6 py-12 opacity-0 animate-[fade-in_0.8s_ease-out_0.2s_forwards]">
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto scale-0 animate-[scale-in_0.6s_ease-out_0.5s_forwards]">
                 <Check className="w-8 h-8 text-primary" />
               </div>
-              <div>
+              <div className="opacity-0 animate-[fade-in_0.8s_ease-out_0.8s_forwards]">
                 <h3 className="text-2xl font-bold text-foreground mb-2">¡Impresionante!</h3>
                 <p className="text-muted-foreground">
                   Zerlo encontró tus documentos y calculó el total automáticamente. 
@@ -137,7 +140,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                   Todo en segundos, sin buscar en carpetas.
                 </p>
               </div>
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-4 justify-center opacity-0 animate-[fade-in_0.8s_ease-out_1.1s_forwards]">
                 <button
                   onClick={resetDemo}
                   className="px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors"
