@@ -42,23 +42,36 @@ const Calendar = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 fade-in">
-          <div className="inline-flex items-center gap-2 bg-primary-light text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             Próximamente
           </div>
           
           <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            Calendario inteligente
+            Calendario Inteligente
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Zerlo añadirá automáticamente tus entrevistas, reuniones y plazos detectados 
-            en documentos a tu calendario personal.
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
+            Nuestra IA creará automáticamente eventos de calendario desde tus documentos: citas, reuniones, fechas límite y más.
           </p>
+          <div className="bg-muted/50 border border-border rounded-lg p-4 max-w-2xl mx-auto">
+            <p className="text-sm text-muted-foreground">
+              <strong>¿Qué hará el calendario?</strong> Detectará fechas importantes en tus documentos (contratos, facturas, citas médicas) y las añadirá automáticamente a tu calendario personal para que nunca olvides una fecha importante.
+            </p>
+          </div>
         </div>
 
-        {/* Calendar Preview */}
-        <div className="mb-12 scale-in">
-          <div className="card-soft max-w-2xl mx-auto">
+        {/* Calendar Preview - Blurred */}
+        <div className="mb-12 scale-in relative">
+          <div className="card-soft max-w-2xl mx-auto relative overflow-hidden">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CalendarIcon className="w-8 h-8 text-primary" />
+                </div>
+                <p className="text-sm font-medium text-muted-foreground">Disponible próximamente</p>
+              </div>
+            </div>
+            
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-foreground">Enero 2025</h3>
               <div className="flex gap-2">
@@ -75,7 +88,7 @@ const Calendar = () => {
                 </div>
               ))}
               {Array.from({ length: 35 }, (_, i) => {
-                const day = i - 2; // Start from day -2 to show previous month
+                const day = i - 2;
                 const isCurrentMonth = day > 0 && day <= 31;
                 const hasEvent = [15, 22, 28].includes(day);
                 
@@ -98,7 +111,7 @@ const Calendar = () => {
             
             {/* Event Examples */}
             <div className="space-y-2">
-              <div className="flex items-center gap-3 p-2 bg-primary-light rounded-lg">
+              <div className="flex items-center gap-3 p-2 bg-primary/10 rounded-lg">
                 <div className="w-3 h-3 bg-primary rounded-full"></div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Pago factura electricidad</p>
@@ -133,11 +146,11 @@ const Calendar = () => {
             {upcomingFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="card-soft scale-in"
+                className="card-soft scale-in opacity-75"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center text-primary flex-shrink-0">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary flex-shrink-0">
                     {feature.icon}
                   </div>
                   <div>
@@ -167,7 +180,7 @@ const Calendar = () => {
               </div>
             ) : (
               <form onSubmit={handleSubscribe}>
-                <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Mail className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">

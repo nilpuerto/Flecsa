@@ -25,7 +25,7 @@ export const App = () => (
           <Route path="/app" element={<AppShell />}>
             <Route path="upload" element={<Upload />} />
             <Route path="process" element={<Process />} />
-            <Route path="doc/:id" element={<DocResult />} />
+            
             <Route path="inbox" element={<Inbox />} />
             <Route path="calendar" element={<Calendar />} />
           </Route>
