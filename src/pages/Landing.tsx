@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import { Upload, Search, Calendar, ArrowRight, Camera, FileText, Tags, Star, Clock, Shield, Smartphone, Quote } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 import LoginModal from "@/components/LoginModal";
+import DemoModal from "@/components/DemoModal";
 
 const Landing = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,10 +42,13 @@ const Landing = () => {
       <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/30">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
-        {/* Floating geometric shapes */}
-        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-t from-primary/30 via-primary/10 to-transparent"></div>
-        <div className="absolute bottom-32 right-20 w-24 h-24 rounded-full bg-gradient-to-t from-primary/25 via-primary/8 to-transparent" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 right-1/4 w-16 h-16 rounded-full bg-gradient-to-t from-primary/20 via-primary/5 to-transparent" style={{ animationDelay: '2s' }}></div>
+        {/* Modern Aurora Background Effect */}
+        <div className="absolute inset-0">
+          <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent"></div>
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse-slow"></div>
+          <div className="absolute bottom-0 right-1/3 w-80 h-80 bg-blue-500/8 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute bottom-0 left-1/2 w-64 h-64 bg-primary/15 rounded-full blur-2xl animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
+        </div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto fade-in">
@@ -72,7 +77,12 @@ const Landing = () => {
                 Probar Zerlo gratis
                 <ArrowRight className="w-6 h-6" />
               </button>
-              <button className="btn-secondary text-lg px-8 py-4">Ver demo en vivo</button>
+              <button 
+                onClick={() => setIsDemoModalOpen(true)}
+                className="btn-secondary text-lg px-8 py-4"
+              >
+                Ver demo en vivo
+              </button>
             </div>
 
             {/* Stats or trust indicators */}
@@ -479,6 +489,12 @@ const Landing = () => {
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
+      />
+
+      {/* Demo Modal */}
+      <DemoModal 
+        isOpen={isDemoModalOpen} 
+        onClose={() => setIsDemoModalOpen(false)} 
       />
     </div>
   );
