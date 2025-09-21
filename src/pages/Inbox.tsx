@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Filter, FileText, Calendar as CalendarIcon, Trash2, Eye } from "lucide-react";
 
 interface SavedDocument {
@@ -11,6 +12,7 @@ interface SavedDocument {
 }
 
 const Inbox = () => {
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<SavedDocument[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Todos");
@@ -195,7 +197,10 @@ const Inbox = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      <button className="btn-ghost text-sm flex items-center gap-1">
+                      <button 
+                        onClick={() => navigate(`/app/document/${doc.id}`)}
+                        className="btn-ghost text-sm flex items-center gap-1"
+                      >
                         <Eye className="w-4 h-4" />
                         Ver completo
                       </button>

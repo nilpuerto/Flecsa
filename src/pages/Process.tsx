@@ -60,50 +60,66 @@ Estado: Procesado correctamente`;
     }
   };
 
-  const saveDocumentAutomatically = (doc: any) => {
-    const tags = getAutomaticTags(doc.name);
-    const extractedText = getMockExtractedText(doc.name);
-    
-    const savedDocument = {
-      id: doc.id,
-      name: doc.name,
-      type: doc.type,
-      extractedText,
-      tags,
-      savedAt: new Date().toISOString(),
-    };
+  const saveDocumentsAutomatically = (docs: any[]) => {
+    const savedDocuments = docs.map(doc => {
+      const tags = getAutomaticTags(doc.name);
+      const extractedText = getMockExtractedText(doc.name);
+      
+      return {
+        id: doc.id,
+        name: doc.name,
+        type: doc.type,
+        extractedText,
+        tags,
+        savedAt: new Date().toISOString(),
+      };
+    });
 
     // Get existing documents
     const existingDocs = JSON.parse(localStorage.getItem('savedDocuments') || '[]');
     
-    // Add new document
-    const updatedDocs = [savedDocument, ...existingDocs];
+    // Add new documents
+    const updatedDocs = [...savedDocuments, ...existingDocs];
     
     // Save to localStorage
     localStorage.setItem('savedDocuments', JSON.stringify(updatedDocs));
     
-    return savedDocument;
+    return savedDocuments;
   };
 
   useEffect(() => {
     // Simulate processing time
     const timer = setTimeout(() => {
-      const docInfo = localStorage.getItem('currentDocument');
-      if (docInfo) {
-        const doc = JSON.parse(docInfo);
+      const docsInfo = localStorage.getItem('documentsToProcess');
+      const docInfo = localStorage.getItem('currentDocument'); // Backwards compatibility
+      
+      if (docsInfo) {
+        const docs = JSON.parse(docsInfo);
         
-        // Automatically save document with tags
-        const savedDoc = saveDocumentAutomatically(doc);
+        // Automatically save documents with tags
+        const savedDocs = saveDocumentsAutomatically(docs);
         
         toast({
-          title: "Documento procesado",
-          description: `${savedDoc.name} se ha añadido a tu bandeja de entrada con etiquetas automáticas.`,
+          title: `${savedDocs.length} documento${savedDocs.length > 1 ? 's' : ''} procesado${savedDocs.length > 1 ? 's' : ''}`,
+          description: `Se ha${savedDocs.length > 1 ? 'n' : ''} añadido a tu bandeja de entrada con etiquetas automáticas.`,
         });
         
         // Navigate directly to inbox
         navigate('/app/inbox');
         
         // Clean up temp storage
+        localStorage.removeItem('documentsToProcess');
+      } else if (docInfo) {
+        // Backwards compatibility for single document
+        const doc = JSON.parse(docInfo);
+        const savedDocs = saveDocumentsAutomatically([doc]);
+        
+        toast({
+          title: "Documento procesado",
+          description: `${savedDocs[0].name} se ha añadido a tu bandeja de entrada con etiquetas automáticas.`,
+        });
+        
+        navigate('/app/inbox');
         localStorage.removeItem('currentDocument');
       } else {
         navigate('/app/upload');

@@ -11,6 +11,7 @@ import DocResult from "./pages/DocResult";
 import Inbox from "./pages/Inbox";
 import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
+import DocumentDetail from "./components/DocumentDetail";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,7 @@ export const App = () => (
           <Route path="/app" element={<AppShell />}>
             <Route path="upload" element={<Upload />} />
             <Route path="process" element={<Process />} />
-            
+            <Route path="document/:id" element={<DocumentDetail />} />
             <Route path="inbox" element={<Inbox />} />
             <Route path="calendar" element={<Calendar />} />
           </Route>

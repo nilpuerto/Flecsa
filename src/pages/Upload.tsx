@@ -4,8 +4,8 @@ import { Upload as UploadIcon, Camera, FileText, Lightbulb, Eye, Frame } from "l
 
 const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -25,37 +25,46 @@ const Upload = () => {
     e.stopPropagation();
     setDragActive(false);
     
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileSelect(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleMultipleFiles(Array.from(e.dataTransfer.files));
     }
   };
 
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
+  const handleMultipleFiles = (files: File[]) => {
+    setSelectedFiles(prev => [...prev, ...files]);
     
-    if (file.type.startsWith('image/')) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    } else {
-      setPreviewUrl("");
-    }
+    const newUrls = files.map(file => {
+      if (file.type.startsWith('image/')) {
+        return URL.createObjectURL(file);
+      }
+      return "";
+    });
+    
+    setPreviewUrls(prev => [...prev, ...newUrls]);
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFileSelect(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      handleMultipleFiles(Array.from(e.target.files));
     }
   };
 
-  const processDocument = () => {
-    if (selectedFile) {
-      // Store file info in localStorage for demo
-      localStorage.setItem('currentDocument', JSON.stringify({
-        name: selectedFile.name,
-        type: selectedFile.type,
-        size: selectedFile.size,
-        id: Date.now().toString()
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const processDocuments = () => {
+    if (selectedFiles.length > 0) {
+      // Store files info in localStorage for demo
+      const documentsToProcess = selectedFiles.map((file, index) => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        id: `${Date.now()}-${index}`
       }));
+      
+      localStorage.setItem('documentsToProcess', JSON.stringify(documentsToProcess));
       navigate('/app/process');
     }
   };
@@ -87,35 +96,52 @@ const Upload = () => {
               onDragOver={handleDrag}
               onDrop={handleDrop}
             >
-              {selectedFile ? (
-                <div className="scale-in">
-                  {previewUrl ? (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="max-w-full max-h-64 mx-auto rounded-lg shadow-medium mb-4"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <FileText className="w-10 h-10 text-muted-foreground" />
-                    </div>
-                  )}
-                  <p className="text-lg font-medium text-foreground mb-2">{selectedFile.name}</p>
-                  <p className="text-muted-foreground mb-4">
-                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                  <div className="flex gap-4 justify-center">
+              {selectedFiles.length > 0 ? (
+                <div className="scale-in space-y-4">
+                  <h3 className="text-xl font-semibold text-foreground mb-4">
+                    {selectedFiles.length} archivo{selectedFiles.length > 1 ? 's' : ''} seleccionado{selectedFiles.length > 1 ? 's' : ''}
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-64 overflow-y-auto">
+                    {selectedFiles.map((file, index) => (
+                      <div key={index} className="border border-border rounded-lg p-3 bg-card">
+                        {previewUrls[index] ? (
+                          <img
+                            src={previewUrls[index]}
+                            alt="Preview"
+                            className="w-full h-32 object-cover rounded mb-2"
+                          />
+                        ) : (
+                          <div className="w-full h-32 bg-muted rounded flex items-center justify-center mb-2">
+                            <FileText className="w-8 h-8 text-muted-foreground" />
+                          </div>
+                        )}
+                        <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="text-xs text-destructive hover:underline mt-1"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="flex gap-4 justify-center mt-4">
                     <button
                       onClick={() => {
-                        setSelectedFile(null);
-                        setPreviewUrl("");
+                        setSelectedFiles([]);
+                        setPreviewUrls([]);
                       }}
                       className="btn-secondary"
                     >
-                      Cambiar archivo
+                      Limpiar todo
                     </button>
-                    <button onClick={processDocument} className="btn-hero">
-                      Procesar documento
+                    <button onClick={processDocuments} className="btn-hero">
+                      Procesar {selectedFiles.length} documento{selectedFiles.length > 1 ? 's' : ''}
                     </button>
                   </div>
                 </div>
@@ -160,6 +186,7 @@ const Upload = () => {
               ref={fileInputRef}
               type="file"
               accept="image/*,.pdf"
+              multiple
               onChange={handleFileInput}
               className="hidden"
             />
