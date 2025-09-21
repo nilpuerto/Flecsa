@@ -1,10 +1,11 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Upload, Inbox, Calendar, User, Menu, X } from "lucide-react";
+import { Upload, Inbox, Calendar, User, Menu, X, Settings, LogOut, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 const AppShell = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const navigation = [
     { name: "Subir", href: "/app/upload", icon: Upload },
@@ -53,9 +54,45 @@ const AppShell = () => {
 
             {/* User Menu & Mobile Toggle */}
             <div className="flex items-center space-x-4">
-              <button className="btn-ghost p-2">
-                <User className="w-5 h-5" />
-              </button>
+              {/* User Menu */}
+              <div className="relative">
+                <button 
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-2 btn-ghost px-3 py-2"
+                >
+                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <span className="hidden md:block text-sm font-medium">Usuario</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                
+                {/* User Dropdown */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50">
+                    <div className="py-2">
+                      <div className="px-4 py-2 border-b border-border">
+                        <p className="text-sm font-medium text-foreground">Mi cuenta</p>
+                        <p className="text-xs text-muted-foreground">usuario@ejemplo.com</p>
+                      </div>
+                      <button className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted flex items-center space-x-2">
+                        <Settings className="w-4 h-4" />
+                        <span>Configuración</span>
+                      </button>
+                      <button className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted flex items-center space-x-2">
+                        <User className="w-4 h-4" />
+                        <span>Perfil</span>
+                      </button>
+                      <div className="border-t border-border mt-2 pt-2">
+                        <button className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-muted flex items-center space-x-2">
+                          <LogOut className="w-4 h-4" />
+                          <span>Cerrar sesión</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               
               {/* Mobile menu button */}
               <button

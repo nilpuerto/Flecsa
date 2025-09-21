@@ -18,9 +18,7 @@ const DocumentDetail = () => {
   const { toast } = useToast();
   const [document, setDocument] = useState<SavedDocument | null>(null);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [isEditingText, setIsEditingText] = useState(false);
   const [editedName, setEditedName] = useState("");
-  const [editedText, setEditedText] = useState("");
   const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
@@ -29,7 +27,6 @@ const DocumentDetail = () => {
     if (doc) {
       setDocument(doc);
       setEditedName(doc.name);
-      setEditedText(doc.extractedText);
     } else {
       navigate('/app/inbox');
     }
@@ -40,8 +37,7 @@ const DocumentDetail = () => {
 
     const updatedDoc = {
       ...document,
-      name: editedName,
-      extractedText: editedText
+      name: editedName
     };
 
     const savedDocs = JSON.parse(localStorage.getItem('savedDocuments') || '[]');
@@ -52,7 +48,6 @@ const DocumentDetail = () => {
     localStorage.setItem('savedDocuments', JSON.stringify(updatedDocs));
     setDocument(updatedDoc);
     setIsEditingName(false);
-    setIsEditingText(false);
 
     toast({
       title: "Cambios guardados",
@@ -159,13 +154,13 @@ const DocumentDetail = () => {
                   value={editedName}
                   onChange={(e) => setEditedName(e.target.value)}
                   className="input-modern text-2xl font-bold"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') saveChanges();
-                    if (e.key === 'Escape') {
-                      setEditedName(document.name);
-                      setIsEditingName(false);
-                    }
-                  }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') saveChanges();
+                      if (e.key === 'Escape') {
+                        setEditedName(document.name);
+                        setIsEditingName(false);
+                      }
+                    }}
                   autoFocus
                 />
                 <button onClick={saveChanges} className="btn-ghost p-2">
@@ -208,16 +203,12 @@ const DocumentDetail = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 mb-8">
-          <button onClick={downloadDocument} className="btn-hero flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            Descargar
-          </button>
           <button
-            onClick={() => setIsEditingText(!isEditingText)}
-            className="btn-secondary flex items-center gap-2"
+            onClick={() => setIsEditingName(!isEditingName)}
+            className="btn-hero flex items-center gap-2"
           >
             <Edit3 className="w-4 h-4" />
-            {isEditingText ? 'Cancelar edición' : 'Editar texto'}
+            Editar
           </button>
           <button
             onClick={deleteDocument}
@@ -232,37 +223,18 @@ const DocumentDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="card-soft">
-              <h2 className="text-xl font-semibold mb-4">Contenido del documento</h2>
-              {isEditingText ? (
-                <div className="space-y-4">
-                  <textarea
-                    value={editedText}
-                    onChange={(e) => setEditedText(e.target.value)}
-                    className="w-full h-96 p-4 border border-border rounded-lg bg-background resize-none"
-                    placeholder="Contenido del documento..."
-                  />
-                  <div className="flex gap-2">
-                    <button onClick={saveChanges} className="btn-hero">
-                      Guardar cambios
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditedText(document.extractedText);
-                        setIsEditingText(false);
-                      }}
-                      className="btn-secondary"
-                    >
-                      Cancelar
-                    </button>
+              <h2 className="text-xl font-semibold mb-4">Vista del documento</h2>
+              <div className="w-full h-96 border border-border rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                <div className="text-center text-muted-foreground">
+                  <div className="w-16 h-16 bg-muted-foreground/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                   </div>
+                  <p>Vista previa del documento</p>
+                  <p className="text-sm mt-1">El documento original se mostraría aquí</p>
                 </div>
-              ) : (
-                <div className="prose max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm text-foreground bg-muted p-4 rounded-lg">
-                    {document.extractedText}
-                  </pre>
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
