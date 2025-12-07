@@ -93,3 +93,4 @@ const CookiesBanner = ({ onAccept, onDeny, onSettings }: CookiesBannerProps) => 
 export default CookiesBanner;
 
 
+

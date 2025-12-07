@@ -526,6 +526,8 @@ const Landing = () => {
   const [isWorkSectionVisible, setIsWorkSectionVisible] = useState(false);
   const [comparisonSectionRef, setComparisonSectionRef] = useState<HTMLDivElement | null>(null);
   const [isComparisonSectionVisible, setIsComparisonSectionVisible] = useState(false);
+  const [waitlistSectionRef, setWaitlistSectionRef] = useState<HTMLDivElement | null>(null);
+  const [isWaitlistSectionVisible, setIsWaitlistSectionVisible] = useState(false);
   const faqSectionRef = useRef<HTMLDivElement>(null);
   const [isFaqSectionVisible, setIsFaqSectionVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -537,6 +539,9 @@ const Landing = () => {
   const [contactForm, setContactForm] = useState({ email: '', message: '' });
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const [contactSuccess, setContactSuccess] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [isWaitlistSubmitting, setIsWaitlistSubmitting] = useState(false);
+  const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   
   // Get language from localStorage or browser
   useEffect(() => {
@@ -604,6 +609,9 @@ const Landing = () => {
             if (entry.target === comparisonSectionRef) {
               setIsComparisonSectionVisible(true);
             }
+            if (entry.target === waitlistSectionRef) {
+              setIsWaitlistSectionVisible(true);
+            }
             if (entry.target === faqSectionRef.current) {
               setIsFaqSectionVisible(true);
             }
@@ -619,6 +627,9 @@ const Landing = () => {
     if (comparisonSectionRef) {
       observer.observe(comparisonSectionRef);
     }
+    if (waitlistSectionRef) {
+      observer.observe(waitlistSectionRef);
+    }
     if (faqSectionRef.current) {
       observer.observe(faqSectionRef.current);
     }
@@ -630,11 +641,14 @@ const Landing = () => {
       if (comparisonSectionRef) {
         observer.unobserve(comparisonSectionRef);
       }
+      if (waitlistSectionRef) {
+        observer.unobserve(waitlistSectionRef);
+      }
       if (faqSectionRef.current) {
         observer.unobserve(faqSectionRef.current);
       }
     };
-  }, [workSectionRef, comparisonSectionRef]);
+  }, [workSectionRef, comparisonSectionRef, waitlistSectionRef]);
 
   const tSync = (key: string): string => {
     return translations[selectedLanguage]?.[key] || translations['es'][key] || key;
@@ -665,8 +679,9 @@ const Landing = () => {
             <div className="flex flex-col w-full lg:w-auto lg:flex-1 mt-2 sm:mt-4 md:mt-8 lg:mt-12">
               {/* Badge */}
               <div className="mb-4" style={{ 
-                animation: 'blur-in-left 0.8s ease-out 0s forwards',
-                opacity: 0 
+                animation: 'fadeInUp 1.2s ease-out 0s forwards',
+                opacity: 0,
+                willChange: 'opacity, transform'
               }}>
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-primary/10 border border-primary/20 rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5">
                   <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
@@ -676,10 +691,11 @@ const Landing = () => {
             
               {/* Title - Never search for a file again */}
               <div className="flex flex-col" style={{ 
-                animation: 'blur-in-left 0.8s ease-out 0s forwards',
-                opacity: 0 
+                animation: 'fadeInRight 1.2s ease-out 0.2s forwards',
+                opacity: 0,
+                willChange: 'opacity, transform'
               }}>
-                <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-normal text-slate-900 leading-tight sm:leading-relaxed font-['Montserrat']">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-normal text-slate-900 leading-tight sm:leading-relaxed font-['Montserrat']">
                   <span className="block sm:inline">Never search</span>
                   <span className="block sm:inline"> for a <span className="font-bold text-primary">FILE</span> again</span>
                 </h1>
@@ -687,8 +703,9 @@ const Landing = () => {
 
               {/* Description and Button - Just below title */}
               <div className="flex flex-col items-start mt-3 sm:mt-4" style={{ 
-                animation: 'blur-in-left 0.8s ease-out 0.15s forwards',
-                opacity: 0 
+                animation: 'fadeInRight 1.2s ease-out 0.4s forwards',
+                opacity: 0,
+                willChange: 'opacity, transform'
               }}>
                 <p className="text-sm sm:text-base md:text-base lg:text-lg text-slate-600 leading-relaxed font-['Montserrat'] text-left max-w-md w-full">
                   Stop hunting for files. Flecsa organizes them all and finds anything you need instantly.
@@ -713,10 +730,10 @@ const Landing = () => {
                 {/* Button below description */}
               <button 
                 onClick={() => setIsEarlyAccessModalOpen(true)}
-                  className="relative mt-4 sm:mt-5 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-full overflow-hidden group transition-all duration-300 font-['Montserrat'] self-start shadow-xl shadow-primary/40 button-shine hover:scale-[1.02]"
+                className="relative mt-4 sm:mt-5 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-full overflow-hidden group transition-all duration-300 font-['Montserrat'] self-start shadow-xl shadow-primary/40 hover:scale-[1.02]"
               >
-                  {/* Subtle continuous shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-100 transition-opacity duration-500"></div>
+                  {/* Subtle continuous shine effect - optimized for mobile */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine-simple"></div>
                   {/* Button text */}
                   <span className="relative z-10">Get early access</span>
               </button>
@@ -739,8 +756,9 @@ const Landing = () => {
                 id="phone-mobile-container"
                 className="absolute z-30"
                 style={{ 
-                  animation: 'blur-in-right 0.8s ease-out 0.4s forwards',
+                  animation: 'blur-in-right 0.6s ease-out 0.3s forwards',
                   opacity: 0,
+                  willChange: 'opacity, transform' as any,
                   left: '8%',
                   top: '-10%',
                 } as React.CSSProperties}
@@ -794,14 +812,19 @@ const Landing = () => {
                   }
                   #insights-label {
                     top: 30% !important;
-                    left: 4% !important;
+                    left: -2% !important;
                   }
                   #products-label {
-                    right: 14% !important;
-                    top: 50% !important;
+                    right: 0% !important;
+                    top: 30% !important;
+                    left: auto !important;
+                  }
+                  #products-label > div {
+                    transform: translateX(20px) scale(0.9) !important;
                   }
                   #summer-label {
-                    top: 75% !important;
+                    top: 63% !important;
+                    right: 7% !important;
                   }
                 }
                 #contract-label {
@@ -810,7 +833,7 @@ const Landing = () => {
                 }
                 #insights-label {
                   top: 25% !important;
-                  left: 4% !important;
+                  left: -2% !important;
                 }
                 #products-label {
                   right: 14% !important;
@@ -821,11 +844,11 @@ const Landing = () => {
                     top: 66% !important;
                   }
                   #insights-label {
-                    left: 12% !important;
+                    left: 8% !important;
                     top: 26% !important;
                   }
                   #products-label {
-                    right: 14% !important;
+                    right: 10% !important;
                   }
                 }
                 @media (min-width: 768px) and (max-width: 1023px) {
@@ -853,14 +876,14 @@ const Landing = () => {
                     transform: scale(0.85) !important;
                   }
                   #products-label {
-                    right: 25% !important;
+                    right: 18% !important;
                     top: 12% !important;
                   }
                   #products-label > div {
                     transform: scale(0.85) !important;
                   }
                   #summer-label {
-                    right: 19% !important;
+                    right: 12% !important;
                     bottom: 20% !important;
                   }
                   #summer-label > div {
@@ -873,11 +896,11 @@ const Landing = () => {
                     top: 67% !important;
                   }
                   #insights-label {
-                    left: 10% !important;
+                    left: 6% !important;
                     top: 27% !important;
                   }
                   #products-label {
-                    right: 14% !important;
+                    right: 10% !important;
                   }
                 }
               `}</style>
@@ -885,68 +908,74 @@ const Landing = () => {
               {/* Floating Document Labels */}
               {/* PDF - Top Left, very very much lower */}
               <div id="contract-label" className="absolute z-40" style={{ 
-                animation: 'blur-in-left 0.8s ease-out 0.4s forwards, float 6s ease-in-out 0s infinite',
+                animation: 'fadeInLeft 1.2s ease-out 0.7s forwards, float 6s ease-in-out 0s infinite',
                 opacity: 0,
+                willChange: 'opacity, transform' as any,
                 top: '65%',
                 left: '16%',
               } as React.CSSProperties}>
-                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-blue-500/50 flex items-center gap-1 sm:gap-1.5 sm:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-75 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
+                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 py-2 sm:px-4 sm:py-2.5 md:px-4 md:py-2.5 lg:px-4 lg:py-2.5 shadow-lg border border-blue-500/50 flex items-center gap-1.5 sm:gap-2 md:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-90 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
                   {/* Shine/Reflection effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none"></div>
-                  <img src={pdfIcon} alt="PDF" className="w-3 h-3 sm:w-4 sm:h-4 relative z-10" />
+                  <img src={pdfIcon} alt="PDF" className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-5 lg:h-5 relative z-10" />
                   <div className="flex flex-col relative z-10">
-                    <span className="text-[10px] sm:text-xs font-medium text-white">Contract.pdf</span>
-                    <span className="text-[8px] sm:text-[10px] text-blue-50">12MB</span>
+                  <span className="text-xs sm:text-sm md:text-sm lg:text-sm font-medium text-white">Contract.pdf</span>
+                  <span className="text-[9px] sm:text-[11px] md:text-[10px] lg:text-[10px] text-blue-50">12MB</span>
                 </div>
                 </div>
                         </div>
                 
               {/* DOC - Mid Left, more to the right */}
               <div id="insights-label" className="absolute z-30" style={{ 
-                animation: 'blur-in-left 0.8s ease-out 0.45s forwards, float 6s ease-in-out 1s infinite',
+                animation: 'fadeInLeft 1.2s ease-out 0.8s forwards, float 6s ease-in-out 1s infinite',
                 opacity: 0,
+                willChange: 'opacity, transform' as any,
                 top: '25%',
                 left: '4%',
               } as React.CSSProperties}>
-                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-blue-500/50 flex items-center gap-1 sm:gap-1.5 sm:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-75 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
+                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 py-2 sm:px-4 sm:py-2.5 md:px-4 md:py-2.5 lg:px-4 lg:py-2.5 shadow-lg border border-blue-500/50 flex items-center gap-1.5 sm:gap-2 md:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-90 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
                   {/* Shine/Reflection effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none"></div>
-                  <img src={docIcon} alt="DOC" className="w-3 h-3 sm:w-4 sm:h-4 relative z-10" />
+                  <img src={docIcon} alt="DOC" className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-5 lg:h-5 relative z-10" />
                   <div className="flex flex-col relative z-10">
-                    <span className="text-[10px] sm:text-xs font-medium text-white">Insights.doc</span>
-                    <span className="text-[8px] sm:text-[10px] text-blue-50">19MB</span>
+                  <span className="text-xs sm:text-sm md:text-sm lg:text-sm font-medium text-white">Insights.doc</span>
+                  <span className="text-[9px] sm:text-[11px] md:text-[10px] lg:text-[10px] text-blue-50">19MB</span>
                       </div>
                     </div>
         </div>
 
               {/* XLSX - Top Right, more to the right, a bit lower */}
-              <div id="products-label" className="absolute top-[14%] right-[12%] sm:right-[14%] z-30" style={{ 
-                animation: 'blur-in-right 0.8s ease-out 0.5s forwards, float 6s ease-in-out 2s infinite',
-                opacity: 0
+              <div id="products-label" className="absolute top-[14%] z-30" style={{ 
+                animation: 'fadeInRight 1.2s ease-out 0.9s forwards, float 6s ease-in-out 2s infinite',
+                opacity: 0,
+                willChange: 'opacity, transform' as any,
+                right: '12%',
+                left: 'auto'
               } as React.CSSProperties}>
-                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-blue-500/50 flex items-center gap-1 sm:gap-1.5 sm:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-75 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
+                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 py-2 sm:px-4 sm:py-2.5 md:px-4 md:py-2.5 lg:px-4 lg:py-2.5 shadow-lg border border-blue-500/50 flex items-center gap-1.5 sm:gap-2 md:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-90 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
                   {/* Shine/Reflection effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none"></div>
-                  <img src={xlsIcon} alt="XLSX" className="w-3 h-3 sm:w-4 sm:h-4 relative z-10" />
+                  <img src={xlsIcon} alt="XLSX" className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-5 lg:h-5 relative z-10" />
                   <div className="flex flex-col relative z-10">
-                    <span className="text-[10px] sm:text-xs font-medium text-white">Products.xlsx</span>
-                    <span className="text-[8px] sm:text-[10px] text-blue-50">1GB</span>
+                  <span className="text-xs sm:text-sm md:text-sm lg:text-sm font-medium text-white">Products.xlsx</span>
+                  <span className="text-[9px] sm:text-[11px] md:text-[10px] lg:text-[10px] text-blue-50">1GB</span>
           </div>
         </div>
               </div>
 
               {/* PNG - Bottom Right, more to the right */}
-              <div id="summer-label" className="absolute bottom-[23%] right-[7%] sm:right-[5%] z-30" style={{ 
-                animation: 'blur-in-right 0.8s ease-out 0.55s forwards, float 6s ease-in-out 3s infinite',
-                opacity: 0
+              <div id="summer-label" className="absolute bottom-[23%] right-[3%] sm:right-[2%] md:right-[1%] z-30" style={{ 
+                animation: 'fadeInRight 1.2s ease-out 1s forwards, float 6s ease-in-out 3s infinite',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
               } as React.CSSProperties}>
-                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-blue-500/50 flex items-center gap-1 sm:gap-1.5 sm:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-75 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
+                <div className="relative bg-blue-600/70 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 py-2 sm:px-4 sm:py-2.5 md:px-4 md:py-2.5 lg:px-4 lg:py-2.5 shadow-lg border border-blue-500/50 flex items-center gap-1.5 sm:gap-2 md:gap-2 hover:bg-blue-600/80 transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden scale-90 sm:scale-100" style={{ filter: 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.6))' }}>
                   {/* Shine/Reflection effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none"></div>
-                  <img src={pngIcon} alt="PNG" className="w-3 h-3 sm:w-4 sm:h-4 relative z-10" />
+                  <img src={pngIcon} alt="PNG" className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-5 lg:h-5 relative z-10" />
                   <div className="flex flex-col relative z-10">
-                    <span className="text-[10px] sm:text-xs font-medium text-white">Summer.png</span>
-                    <span className="text-[8px] sm:text-[10px] text-blue-50">10MB</span>
+                  <span className="text-xs sm:text-sm md:text-sm lg:text-sm font-medium text-white">Summer.png</span>
+                  <span className="text-[9px] sm:text-[11px] md:text-[10px] lg:text-[10px] text-blue-50">10MB</span>
               </div>
           </div>
                   </div>
@@ -955,8 +984,9 @@ const Landing = () => {
 
           {/* Section Header for Cards */}
           <div className="mt-20 sm:mt-24 md:mt-28 lg:mt-36 mb-6 sm:mb-8" style={{ 
-            animation: 'blur-in-left 0.8s ease-out 0.6s forwards',
-            opacity: 0 
+            animation: 'fadeInUp 1.2s ease-out 0.3s forwards',
+            opacity: 0,
+            willChange: 'opacity, transform' as any
           }}>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
@@ -984,8 +1014,9 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 w-full">
             {/* Card 1: No manual work needed */}
             <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
-              animation: 'blur-in-left 0.8s ease-out 0.7s forwards',
-              opacity: 0 
+              animation: 'fadeInLeft 1.2s ease-out 0.5s forwards',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
             }}>
               {/* Abstract background shapes */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-slate-200/30 rounded-full blur-3xl group-hover:bg-slate-300/40 transition-all duration-500"></div>
@@ -1019,8 +1050,9 @@ const Landing = () => {
               
             {/* Card 2: Organized in real time */}
             <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
-              animation: 'blur-in-left 0.8s ease-out 0.75s forwards',
-              opacity: 0 
+              animation: 'fadeInUp 1.2s ease-out 0.6s forwards',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
             }}>
               {/* Abstract background shapes */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-slate-200/30 rounded-full blur-3xl group-hover:bg-slate-300/40 group-hover:scale-110 transition-all duration-500"></div>
@@ -1052,9 +1084,10 @@ const Landing = () => {
                       </div>
 
             {/* Card 3: Search documents with AI */}
-            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
-              animation: 'blur-in-right 0.8s ease-out 0.8s forwards',
-              opacity: 0 
+            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{
+              animation: 'fadeInRight 1.2s ease-out 0.7s forwards',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
             }}>
               {/* Abstract background shapes */}
               <div className="absolute top-0 left-0 w-28 h-28 bg-slate-200/20 rounded-full blur-3xl group-hover:bg-slate-300/30 group-hover:scale-110 transition-all duration-500"></div>
@@ -1098,8 +1131,9 @@ const Landing = () => {
         <div 
           className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 relative z-10"
           style={{
-            animation: isComparisonSectionVisible ? 'blur-in-left 0.8s ease-out forwards' : 'none',
-            opacity: isComparisonSectionVisible ? 1 : 0
+            animation: isComparisonSectionVisible ? 'fadeInUp 1.2s ease-out 0.2s forwards' : 'none',
+            opacity: isComparisonSectionVisible ? 1 : 0,
+            willChange: 'opacity, transform' as any
           }}
         >
           {/* Badge */}
@@ -1179,10 +1213,10 @@ const Landing = () => {
                     <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
                       <Search className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-primary" />
                       <span className="text-[8px] sm:text-xs text-slate-600 font-['Montserrat']">AI Search</span>
-                    </div>
+                  </div>
                     <div className="text-[8px] sm:text-xs text-slate-900 font-['Montserrat'] font-medium">Find docs...</div>
                   </div>
-                  
+                        
                   {/* Arrow from search to computer */}
                   <svg className="absolute top-12 right-12 sm:top-16 sm:right-20 w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20" style={{ transform: 'rotate(-45deg)' }}>
                     <path d="M 0 0 L 20 20" stroke="#0a73ff" strokeWidth="1.5" fill="none" strokeDasharray="3,3" opacity="0.7" className="sm:stroke-[2]" />
@@ -1209,31 +1243,32 @@ const Landing = () => {
                     <div className="flex items-center gap-1 sm:gap-1.5">
                       <Bot className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
                       <span className="text-[8px] sm:text-[10px] text-white font-['Montserrat'] font-medium">AI</span>
-                    </div>
                   </div>
+            </div>
                   
                   {/* Arrow from AI tag to computer */}
                   <svg className="absolute top-20 left-6 sm:top-28 sm:left-12 w-5 h-5 sm:w-10 sm:h-10 md:w-14 md:h-14" style={{ transform: 'rotate(20deg)' }}>
                     <path d="M 0 0 L 12 10" stroke="#0a73ff" strokeWidth="1.5" fill="none" strokeDasharray="3,3" opacity="0.7" className="sm:stroke-[2]" />
                     <path d="M 9 8 L 12 10 L 9 12" stroke="#0a73ff" strokeWidth="1.5" fill="none" opacity="0.7" className="sm:stroke-[2]" />
                   </svg>
-                </div>
-                </div>
-              </div>
+          </div>
+            </div>
+          </div>
 
             {/* Right Side - Content */}
             <div 
               className="flex flex-col gap-4 sm:gap-5 order-1 lg:order-2"
               style={{
-                animation: isWorkSectionVisible ? 'blur-in-left 0.8s ease-out 0.2s forwards' : 'none',
-                opacity: isWorkSectionVisible ? 1 : 0
+                animation: isWorkSectionVisible ? 'fadeInRight 1.2s ease-out 0.3s forwards' : 'none',
+                opacity: isWorkSectionVisible ? 1 : 0,
+                willChange: 'opacity, transform' as any
               }}
             >
               {/* Badge - Minimalist */}
               <div className="inline-flex items-center gap-1.5 bg-primary/5 border border-primary/10 rounded-full px-3 py-1 w-fit">
                 <Sparkles className="w-3 h-3 text-primary" />
                 <span className="text-primary text-xs font-normal font-['Montserrat']">Available Everywhere</span>
-              </div>
+                  </div>
 
               {/* Main Title - Smaller and more emotional */}
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-normal text-slate-900 leading-tight font-['Montserrat']">
@@ -1250,7 +1285,7 @@ const Landing = () => {
                 <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
                   <Smartphone className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
                   <span className="text-slate-600 text-xs font-['Montserrat']">Mobile</span>
-          </div>
+        </div>
                 <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
                   <Laptop className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
                   <span className="text-slate-600 text-xs font-['Montserrat']">Desktop</span>
@@ -1258,15 +1293,15 @@ const Landing = () => {
                 <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
                   <Monitor className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
                   <span className="text-slate-600 text-xs font-['Montserrat']">Tablet</span>
-        </div>
-          </div>
+                </div>
+              </div>
 
               {/* Stats - Smaller */}
               <div className="flex flex-wrap items-center gap-4 sm:gap-5 mt-3">
                 <div className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-primary" />
                   <span className="text-slate-600 text-xs sm:text-sm font-['Montserrat']">Sync across devices</span>
-              </div>
+                    </div>
                 <div className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-primary" />
                   <span className="text-slate-600 text-xs sm:text-sm font-['Montserrat']">Always accessible</span>
@@ -1274,11 +1309,153 @@ const Landing = () => {
                 <div className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-primary" />
                   <span className="text-slate-600 text-xs sm:text-sm font-['Montserrat']">Secure & private</span>
-              </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Join Waitlist Section */}
+      <section 
+        ref={(el) => {
+          if (el && !waitlistSectionRef) setWaitlistSectionRef(el as HTMLDivElement);
+        }}
+        className="relative bg-slate-50 py-16 sm:py-20 md:py-24 lg:py-28"
+      >
+        <div 
+          className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-4xl"
+          style={{
+            opacity: isWaitlistSectionVisible ? 1 : 0,
+            willChange: 'opacity' as any
+          }}
+        >
+          {/* Badge */}
+          <div 
+            className="flex justify-center mb-6"
+            style={{
+              animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.1s forwards' : 'none',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
+            }}
+          >
+            <div className="relative inline-flex items-center gap-2 bg-slate-900 rounded-full px-4 py-2 overflow-hidden">
+              {/* Glowing blue effect */}
+              <div className="absolute inset-0 bg-primary/20 blur-xl animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-shine-simple"></div>
+              <div className="relative z-10 w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <span className="relative z-10 text-white text-xs sm:text-sm font-medium uppercase tracking-wider font-['Montserrat']">Available in Early 2026</span>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h2 
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 text-center mb-4 font-['Montserrat']"
+            style={{
+              animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.3s forwards' : 'none',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
+            }}
+          >
+            Join the waitlist
+            </h2>
+
+          {/* Description */}
+          <p 
+            className="text-base sm:text-lg md:text-xl text-slate-600 text-center mb-8 sm:mb-10 max-w-2xl mx-auto font-['Montserrat']"
+            style={{
+              animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.5s forwards' : 'none',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
+            }}
+          >
+            Flecsa launches in early 2026. Join the waitlist now and get one month free at launch.
+          </p>
+
+          {/* Email Form */}
+          {!waitlistSuccess ? (
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!waitlistEmail || !waitlistEmail.includes('@')) {
+                  return;
+                }
+
+                setIsWaitlistSubmitting(true);
+
+                try {
+                  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+                  const response = await fetch(`${apiUrl}/api/early-access/request`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: waitlistEmail }),
+                  });
+
+                  if (response.ok) {
+                    setWaitlistSuccess(true);
+                    setWaitlistEmail('');
+                    setTimeout(() => setWaitlistSuccess(false), 3000);
+                  } else {
+                    throw new Error('Failed to send email');
+                  }
+                } catch (error) {
+                  console.error('Error sending waitlist email:', error);
+                  // Show success anyway for better UX
+                  setWaitlistSuccess(true);
+                  setWaitlistEmail('');
+                  setTimeout(() => setWaitlistSuccess(false), 3000);
+                } finally {
+                  setIsWaitlistSubmitting(false);
+                }
+              }}
+              className="max-w-lg mx-auto"
+              style={{
+                animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.7s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
+              }}
+            >
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={waitlistEmail}
+                  onChange={(e) => setWaitlistEmail(e.target.value)}
+                  required
+                  disabled={isWaitlistSubmitting}
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 pr-24 sm:pr-28 text-slate-900 placeholder:text-slate-400 focus:outline-none font-['Montserrat'] text-sm sm:text-base bg-white border border-slate-300 rounded-full shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                <button
+                  type="submit"
+                  disabled={isWaitlistSubmitting || !waitlistEmail}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 px-5 sm:px-6 py-2 sm:py-2.5 bg-primary text-white font-semibold rounded-full hover:bg-primary/90 transition-colors font-['Montserrat'] text-sm sm:text-base whitespace-nowrap shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isWaitlistSubmitting ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    'Join waitlist'
+                  )}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div 
+              className="max-w-lg mx-auto text-center"
+              style={{
+                animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.7s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
+              }}
+            >
+              <div className="bg-primary/10 border border-primary/30 rounded-full px-6 py-3 inline-flex items-center gap-2">
+                <Check className="w-5 h-5 text-primary" />
+                <span className="text-primary font-semibold font-['Montserrat']">You're on the waitlist!</span>
+            </div>
+                </div>
+          )}
+              </div>
       </section>
 
       {/* FAQ Section */}
@@ -1287,54 +1464,97 @@ const Landing = () => {
         className="relative bg-slate-50 py-8 sm:py-12 md:py-16 lg:py-20"
       >
         <div 
-          className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-3xl"
+          className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-4xl lg:max-w-5xl"
           style={{
-            animation: isFaqSectionVisible ? 'blur-in-left 0.8s ease-out 0.2s forwards' : 'none',
-            opacity: isFaqSectionVisible ? 1 : 0
+            opacity: isFaqSectionVisible ? 1 : 0,
+            willChange: 'opacity' as any
           }}
         >
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 mb-6 sm:mb-8 font-['Montserrat']">
+          <h2 
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-slate-900 mb-6 sm:mb-8 font-['Montserrat']"
+            style={{
+              animation: isFaqSectionVisible ? 'fadeInUp 1.2s ease-out 0.1s forwards' : 'none',
+              opacity: 0,
+              willChange: 'opacity, transform' as any
+            }}
+          >
             Questions & answers
           </h2>
           
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1" className="border-b border-slate-200">
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-sm sm:text-base hover:no-underline">
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="w-full"
+          >
+            <AccordionItem 
+              value="item-1" 
+              className="border-b border-slate-200"
+              style={{
+                animation: isFaqSectionVisible ? 'fadeInUp 1.2s ease-out 0.3s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
+              }}
+            >
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
                 How does Flecsa work?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-xs sm:text-sm pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
                 Flecsa is free to use with monthly credits included. You get free credits each month to organize files and use AI search. If you need more, you can upgrade to a paid plan for additional credits and features.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-2" className="border-b border-slate-200">
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-sm sm:text-base hover:no-underline">
+            <AccordionItem 
+              value="item-2" 
+              className="border-b border-slate-200"
+              style={{
+                animation: isFaqSectionVisible ? 'fadeInUp 1.2s ease-out 0.5s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
+              }}
+            >
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
                 How does Flecsa protect my privacy?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-xs sm:text-sm pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
                 Your data is fully encrypted. Files are never used to train AI models, and we don't sell or share your information.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-3" className="border-b border-slate-200">
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-sm sm:text-base hover:no-underline">
+            <AccordionItem 
+              value="item-3" 
+              className="border-b border-slate-200"
+              style={{
+                animation: isFaqSectionVisible ? 'fadeInUp 1.2s ease-out 0.7s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
+              }}
+            >
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
                 Do I need to install anything?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-xs sm:text-sm pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
                 No — Flecsa works directly in your browser. Just sign in and start uploading.
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-4" className="border-b border-slate-200">
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-sm sm:text-base hover:no-underline">
+            <AccordionItem 
+              value="item-4" 
+              className="border-b border-slate-200"
+              style={{
+                animation: isFaqSectionVisible ? 'fadeInUp 1.2s ease-out 0.9s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
+              }}
+            >
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
                 What happens when I run out of credits?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-xs sm:text-sm pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
                 You can still upload files normally. Automatic organization and AI search will pause until your credits renew next month.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </div>
+              </div>
       </section>
 
       {/* Footer */}
@@ -1351,17 +1571,17 @@ const Landing = () => {
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-lg">F</span>
-                </div>
-                <span className="text-2xl font-bold text-white font-['Montserrat']">Flecsa</span>
               </div>
+                <span className="text-2xl font-bold text-white font-['Montserrat']">Flecsa</span>
+            </div>
               <p className="text-slate-300 text-sm font-['Montserrat'] mb-6 max-w-sm">
                 Organize your documents with AI-powered intelligence. Never search for a file again.
               </p>
               <div className="flex items-center gap-2 text-slate-400 text-sm font-['Montserrat']">
                 <Mail className="w-4 h-4" />
                 <a href="mailto:support@flecsa.com" className="hover:text-primary transition-colors">support@flecsa.com</a>
-              </div>
-            </div>
+          </div>
+        </div>
 
             {/* Links Columns */}
             <div className="lg:col-span-2">
@@ -1383,7 +1603,7 @@ const Landing = () => {
                   </Link>
                 </li>
               </ul>
-            </div>
+          </div>
 
             <div className="lg:col-span-2">
               <h4 className="font-semibold text-white mb-4 font-['Montserrat']">Company</h4>
@@ -1394,7 +1614,7 @@ const Landing = () => {
                   </Link>
                 </li>
               </ul>
-            </div>
+          </div>
 
             <div className="lg:col-span-2">
               <h4 className="font-semibold text-white mb-4 font-['Montserrat']">Legal</h4>
@@ -1415,17 +1635,17 @@ const Landing = () => {
                   </a>
                 </li>
               </ul>
-            </div>
+        </div>
 
             {/* Contact Support Column */}
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
                   <Mail className="w-4 h-4 text-primary" />
-                </div>
+            </div>
                 <h4 className="font-semibold text-white font-['Montserrat']">Get Support</h4>
-              </div>
-              
+          </div>
+
               {!contactSuccess ? (
                 <form 
                   onSubmit={async (e) => {
@@ -1459,8 +1679,8 @@ const Landing = () => {
                   className="space-y-2.5"
                 >
                   <div className="relative">
-                    <input
-                      type="email"
+                <input
+                  type="email"
                       placeholder="Email"
                       value={contactForm.email}
                       onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
@@ -1478,7 +1698,7 @@ const Landing = () => {
                       className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white text-xs placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 resize-none font-['Montserrat']"
                     />
                   </div>
-                  <button
+            <button 
                     type="submit"
                     disabled={isContactSubmitting}
                     className="w-full px-3 py-2 bg-primary text-white rounded-lg font-semibold text-xs hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-['Montserrat'] shadow-lg shadow-primary/20 hover:shadow-primary/30"
@@ -1494,8 +1714,8 @@ const Landing = () => {
                         Send Message
                       </span>
                     )}
-                  </button>
-                </form>
+            </button>
+              </form>
               ) : (
                 <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-center">
                   <div className="flex items-center justify-center gap-2 mb-1">
@@ -1503,10 +1723,10 @@ const Landing = () => {
                     <p className="text-xs text-primary font-semibold font-['Montserrat']">Sent!</p>
                   </div>
                   <p className="text-xs text-slate-400 font-['Montserrat']">We'll respond soon</p>
-                </div>
+              </div>
               )}
+              </div>
             </div>
-          </div>
 
           {/* Bottom Bar */}
           <div className="border-t border-slate-800 py-6 sm:py-8">
@@ -1542,7 +1762,7 @@ const Landing = () => {
                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                   </svg>
                 </button>
-              </div>
+            </div>
             </div>
           </div>
         </div>

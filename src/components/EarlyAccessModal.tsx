@@ -63,18 +63,23 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClose();
+        }}
         style={{ animation: 'fadeIn 0.3s ease-out forwards', opacity: 0 }}
       ></div>
 
       {/* Modal */}
       <div 
-        className="relative rounded-2xl sm:rounded-3xl shadow-2xl max-w-sm sm:max-w-md w-full p-5 sm:p-8 overflow-hidden bg-white border border-slate-200"
+        className="relative rounded-2xl sm:rounded-3xl shadow-2xl max-w-sm sm:max-w-md w-full p-5 sm:p-8 overflow-hidden bg-white border border-slate-200 z-50"
         style={{ 
-          animation: 'blur-in-left 0.4s ease-out 0.1s forwards',
+          animation: 'fadeInUp 0.4s ease-out 0.1s forwards',
           opacity: 0
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Decorative elements - matching site design */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
@@ -82,8 +87,13 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
 
         {/* Close button */}
         <button
-          onClick={onClose}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full hover:bg-slate-100 transition-colors z-10"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full hover:bg-slate-100 transition-colors z-50 cursor-pointer"
+          aria-label="Close modal"
         >
           <X className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
         </button>
@@ -102,7 +112,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
           <h2 
             className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-2 font-['Montserrat']"
             style={{ 
-              animation: 'blur-in-left 0.4s ease-out 0.2s forwards', 
+              animation: 'fadeIn 0.4s ease-out 0.2s forwards', 
               opacity: 0 
             }}
           >
@@ -111,7 +121,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
           <p 
             className="text-sm sm:text-base text-slate-600 text-center mb-6 sm:mb-8 font-['Montserrat']"
             style={{ 
-              animation: 'blur-in-left 0.4s ease-out 0.25s forwards', 
+              animation: 'fadeIn 0.4s ease-out 0.25s forwards', 
               opacity: 0 
             }}
           >
@@ -123,7 +133,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
               onSubmit={handleSubmit} 
               className="space-y-3 sm:space-y-4"
               style={{ 
-                animation: 'blur-in-left 0.4s ease-out 0.3s forwards', 
+                animation: 'fadeIn 0.4s ease-out 0.3s forwards', 
                 opacity: 0 
               }}
             >
@@ -162,7 +172,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
             <div 
               className="text-center py-6 sm:py-8"
               style={{ 
-                animation: 'blur-in-left 0.4s ease-out 0.3s forwards', 
+                animation: 'fadeIn 0.4s ease-out 0.3s forwards', 
                 opacity: 0 
               }}
             >

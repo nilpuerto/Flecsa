@@ -46,11 +46,11 @@ const Navbar = () => {
       }`}
     >
       <div className="w-full px-2 md:container md:mx-auto md:px-6 lg:px-12 xl:px-16">
-        <div className="flex items-center justify-between h-10 sm:h-12 w-full max-w-full">
+        <div className="flex items-center justify-between h-12 sm:h-14 md:h-16 w-full max-w-full">
           {/* Logo - Left */}
           <Link 
             to="/" 
-            className="text-base font-medium text-slate-900 hover:text-slate-700 transition-colors tracking-wide antialiased subpixel-antialiased"
+            className="text-lg sm:text-xl md:text-2xl font-medium text-slate-900 hover:text-slate-700 transition-colors tracking-wide antialiased subpixel-antialiased"
           >
             Flecsa
           </Link>
@@ -61,7 +61,7 @@ const Navbar = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-xs font-medium tracking-wide transition-colors antialiased subpixel-antialiased ${
+                className={`text-sm md:text-base font-medium tracking-wide transition-colors antialiased subpixel-antialiased ${
                   location.pathname === link.path
                     ? "text-slate-900"
                     : "text-slate-700 hover:text-slate-900"
@@ -75,7 +75,7 @@ const Navbar = () => {
               className="text-slate-700 hover:text-slate-900 transition-colors flex-shrink-0"
               aria-label="User profile"
             >
-              <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />
+              <User className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.5]" />
             </Link>
           </div>
 
@@ -86,7 +86,7 @@ const Navbar = () => {
               className="text-slate-700 hover:text-slate-900 transition-colors flex-shrink-0"
               aria-label="User profile"
             >
-              <User className="w-4 h-4 stroke-[1.5]" />
+              <User className="w-5 h-5 stroke-[1.5]" />
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -94,9 +94,9 @@ const Navbar = () => {
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               ) : (
-                <Menu className="w-5 h-5" />
+                <Menu className="w-6 h-6" />
               )}
             </button>
           </div>
@@ -205,47 +205,86 @@ const Navbar = () => {
       )}
 
       {/* Coming Soon Modal */}
-      {showComingSoon && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4">
+      {showComingSoon && createPortal(
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-4">
+          {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setShowComingSoon(false)}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowComingSoon(false);
+            }}
             style={{ animation: 'fadeIn 0.3s ease-out forwards', opacity: 0 }}
           ></div>
+          
+          {/* Modal */}
           <div 
-            className="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-xs sm:max-w-sm w-full p-4 sm:p-6 border border-slate-200"
+            className="relative rounded-2xl sm:rounded-3xl shadow-2xl max-w-sm sm:max-w-md w-full p-5 sm:p-8 overflow-hidden bg-white border border-slate-200 z-50"
             style={{ 
-              animation: 'blur-in-left 0.4s ease-out 0.1s forwards',
+              animation: 'fadeInUp 0.4s ease-out 0.1s forwards',
               opacity: 0
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-primary/5 rounded-full blur-xl translate-y-1/2 -translate-x-1/2"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
 
+            {/* Close button */}
             <button
-              onClick={() => setShowComingSoon(false)}
-              className="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 sm:p-2 rounded-full hover:bg-slate-100 transition-colors z-10"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowComingSoon(false);
+              }}
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full hover:bg-slate-100 transition-colors z-50 cursor-pointer"
+              aria-label="Close modal"
             >
               <X className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
             </button>
-            <div className="text-center relative z-10">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+
+            {/* Content */}
+            <div className="relative z-10 text-center">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
                 <User className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-1.5 sm:mb-2 font-['Montserrat']">Coming Soon</h3>
-              <p className="text-xs sm:text-sm text-slate-600 font-['Montserrat'] mb-4 sm:mb-5 px-2">
+              <h3 
+                className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 font-['Montserrat']"
+                style={{ 
+                  animation: 'fadeIn 0.4s ease-out 0.2s forwards', 
+                  opacity: 0 
+                }}
+              >
+                Coming Soon
+              </h3>
+              <p 
+                className="text-sm sm:text-base text-slate-600 font-['Montserrat'] mb-6 sm:mb-8"
+                style={{ 
+                  animation: 'fadeIn 0.4s ease-out 0.25s forwards', 
+                  opacity: 0 
+                }}
+              >
                 My Account feature is currently under development.
               </p>
               <button
-                onClick={() => setShowComingSoon(false)}
-                className="px-5 sm:px-6 py-2 sm:py-2.5 bg-primary text-white text-sm sm:text-base rounded-full font-semibold font-['Montserrat'] hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowComingSoon(false);
+                }}
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white text-sm sm:text-base rounded-full font-semibold font-['Montserrat'] hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30"
+                style={{ 
+                  animation: 'fadeIn 0.4s ease-out 0.3s forwards', 
+                  opacity: 0 
+                }}
               >
                 Got it
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </nav>
   );

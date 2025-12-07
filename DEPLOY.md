@@ -78,37 +78,57 @@ Si tu frontend necesita variables de entorno (como `VITE_API_URL`):
    - Ejecuta el build
    - Despliega el sitio
 
-### **Paso 8: Configurar el Dominio flecsa.com**
+### **Paso 8: Configurar el Dominio flecsa.com en Cloudflare**
 
 1. En Vercel, ve a tu proyecto → **Settings** → **Domains**
 2. Añade `flecsa.com` y `www.flecsa.com`
-3. Vercel te dará instrucciones para configurar DNS:
+3. Vercel te dará instrucciones para configurar DNS
 
-   **Opciones de DNS:**
+4. **En Cloudflare:**
+   - Ve a tu panel de Cloudflare → Selecciona el dominio `flecsa.com`
+   - Ve a **DNS** → **Records**
 
-   **Opción A - Usando CNAME (Recomendado):**
-   ```
-   Tipo: CNAME
-   Nombre: @ (o vacío)
-   Valor: cname.vercel-dns.com
-   ```
+5. **Configuración DNS en Cloudflare:**
 
-   **Opción B - Usando A Record:**
-   ```
-   Tipo: A
-   Nombre: @
-   Valor: 76.76.21.21
-   ```
+   **Para el dominio principal (flecsa.com):**
+   - Si Cloudflare está en modo **DNS Only** (gris):
+     ```
+     Tipo: CNAME
+     Nombre: @
+     Contenido: cname.vercel-dns.com
+     Proxy: Desactivado (nube gris)
+     ```
+   - Si Cloudflare está en modo **Proxied** (naranja):
+     ```
+     Tipo: A
+     Nombre: @
+     Contenido: 76.76.21.21
+     Proxy: Activado (nube naranja) - OPCIONAL
+     ```
+     O también puedes usar:
+     ```
+     Tipo: CNAME
+     Nombre: @
+     Contenido: cname.vercel-dns.com
+     Proxy: Desactivado (nube gris) - RECOMENDADO para Vercel
+     ```
 
-   Para `www.flecsa.com`:
+   **Para www.flecsa.com:**
    ```
    Tipo: CNAME
    Nombre: www
-   Valor: cname.vercel-dns.com
+   Contenido: cname.vercel-dns.com
+   Proxy: Desactivado (nube gris) - RECOMENDADO
    ```
 
-4. Ve a tu proveedor de dominio (donde compraste flecsa.com) y añade estos registros DNS
-5. Espera 5-60 minutos para que se propague el DNS
+6. **Importante en Cloudflare:**
+   - **Desactiva el Proxy (nube gris)** para los registros de Vercel para evitar problemas
+   - Si quieres usar el proxy de Cloudflare, Vercel puede funcionar pero puede haber conflictos con SSL
+   - Espera 1-5 minutos (Cloudflare es muy rápido)
+
+7. **Verificación:**
+   - Vercel detectará automáticamente cuando los DNS estén configurados
+   - En Vercel → Settings → Domains verás el estado (Valid Configuration)
 
 ### **Paso 9: Verificar SSL**
 
