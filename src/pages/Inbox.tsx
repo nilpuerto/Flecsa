@@ -1,50 +1,90 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, FileText, Calendar as CalendarIcon, Trash2, Eye } from "lucide-react";
+import { Search, FileText, Calendar as CalendarIcon, Trash2, Eye, Share2, Mic, Square } from "lucide-react";
+import { apiService } from "@/services/api";
+import { useAuth } from "@/hooks/useAuth";
 
-interface SavedDocument {
-  id: string;
-  name: string;
-  type: string;
-  extractedText: string;
-  tags: string[];
-  savedAt: string;
+interface BackendDocument {
+  id: number;
+  filename: string;
+  mime_type: string;
+  byte_size: number;
+  status: string;
+  provider: string | null;
+  invoice_number: string | null;
+  currency: string | null;
+  amount: number | null;
+  issue_date: string | null;
+  created_at: string;
+  updated_at: string;
+  ocr_text: string | null;
+  extracted_data: any;
+  tags?: string | null; // comma-separated from backend
 }
 
 const Inbox = () => {
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState<SavedDocument[]>([]);
+  const { isAuthenticated } = useAuth();
+  const [documents, setDocuments] = useState<BackendDocument[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Todos");
-  const [filteredDocs, setFilteredDocs] = useState<SavedDocument[]>([]);
+  const [filteredDocs, setFilteredDocs] = useState<BackendDocument[]>([]);
+  const [availableTags, setAvailableTags] = useState<{ tag: string; count: number }[]>([]);
+  const [aiQuery, setAiQuery] = useState("");
+  const [listening, setListening] = useState(false);
 
-  const filters = ["Todos", "Facturas", "Notas", "Tickets"];
+  const filters = ["Todos", ...availableTags.map(t => t.tag.charAt(0).toUpperCase() + t.tag.slice(1))];
 
   useEffect(() => {
-    const savedDocs = JSON.parse(localStorage.getItem('savedDocuments') || '[]');
-    setDocuments(savedDocs);
-  }, []);
+    const fetchData = async () => {
+      if (!isAuthenticated) return;
+      
+      // Fetch documents and tags in parallel for faster loading
+      const [docsResp, tagsResp] = await Promise.all([
+        apiService.getDocuments(1, 50, ""),
+        apiService.getTags()
+      ]);
+      
+      if (!docsResp.error && docsResp.data) {
+        setDocuments((docsResp.data as any).documents || []);
+      }
+      
+      if (!tagsResp.error && tagsResp.data) {
+        setAvailableTags((tagsResp.data as any).tags || []);
+      }
+    };
+    
+    fetchData();
+  }, [isAuthenticated]);
 
   useEffect(() => {
     let filtered = documents;
 
     // Apply filter
     if (selectedFilter !== "Todos") {
-      filtered = filtered.filter(doc => 
-        doc.tags.some(tag => 
-          tag.toLowerCase().includes(selectedFilter.toLowerCase().slice(0, -1)) // Remove 's' from plural
-        )
-      );
+      filtered = filtered.filter(doc => {
+        const tags = (doc.tags || "").toLowerCase().split(",").map(t => t.trim());
+        const needle = selectedFilter.toLowerCase();
+        // match normalized tags exactly (singular/plural flexible)
+        const norm = (s: string) => s
+          .toLowerCase()
+          .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+          .replace(/[^a-z0-9\s]/g, '')
+          .trim();
+        const isMatch = (t: string) => {
+          const nt = norm(t);
+          const nn = norm(needle);
+          if (nt === nn) return true;
+          // pluralization: factura(s), nota(s), ticket(s), nomina(s)
+          if (nt + 's' === nn) return true;
+          if (nn + 's' === nt) return true;
+          return false;
+        };
+        return tags.some(isMatch);
+      });
     }
 
-    // Apply search
-    if (searchQuery) {
-      filtered = filtered.filter(doc => 
-        doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.extractedText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
+    // Search removed (AI input is the primary entry point)
 
     setFilteredDocs(filtered);
   }, [documents, searchQuery, selectedFilter]);
@@ -57,20 +97,64 @@ const Inbox = () => {
     });
   };
 
-  const getDocumentIcon = (tags: string[]) => {
-    if (tags.some(tag => tag.toLowerCase().includes('factura'))) {
-      return <FileText className="w-5 h-5 text-green-600" />;
+  const getDocumentStyles = (doc: BackendDocument) => {
+    const tags = (doc.tags || '').toLowerCase();
+    if (doc.mime_type === 'application/pdf' || tags.includes('pdf')) {
+      return { iconClass: 'text-purple-600', cardClass: 'border-purple-200 bg-purple-50/50' };
     }
-    if (tags.some(tag => tag.toLowerCase().includes('ticket'))) {
-      return <FileText className="w-5 h-5 text-blue-600" />;
+    if (doc.mime_type?.startsWith('image/')) {
+      return { iconClass: 'text-amber-600', cardClass: 'border-amber-200 bg-amber-50/50' }; // fotos amarillas
     }
-    return <FileText className="w-5 h-5 text-purple-600" />;
+    if (doc.mime_type?.startsWith('video/')) {
+      return { iconClass: 'text-red-600', cardClass: 'border-red-200 bg-red-50/50' };
+    }
+    if (doc.mime_type?.includes('presentation') || doc.mime_type?.includes('powerpoint')) {
+      return { iconClass: 'text-rose-600', cardClass: 'border-rose-200 bg-rose-50/50' };
+    }
+    if (doc.mime_type?.includes('spreadsheet') || doc.mime_type?.includes('excel')) {
+      return { iconClass: 'text-emerald-600', cardClass: 'border-emerald-200 bg-emerald-50/50' };
+    }
+    if (doc.mime_type?.includes('word') || doc.mime_type?.includes('msword')) {
+      return { iconClass: 'text-fuchsia-600', cardClass: 'border-fuchsia-200 bg-fuchsia-50/50' }; // word rosas
+    }
+    return { iconClass: 'text-blue-600', cardClass: 'border-blue-200 bg-blue-50/50' };
   };
 
-  const deleteDocument = (id: string) => {
-    const updatedDocs = documents.filter(doc => doc.id !== id);
-    setDocuments(updatedDocs);
-    localStorage.setItem('savedDocuments', JSON.stringify(updatedDocs));
+  const shareDocument = (doc: BackendDocument) => {
+    const url = `${window.location.origin}/app/document/${doc.id}`;
+    const title = doc.filename;
+    const text = `Te comparto este documento: ${doc.filename}`;
+    if ((navigator as any).share) {
+      (navigator as any).share({ title, text, url }).catch(() => {});
+      return;
+    }
+    // fallbacks
+    const mailto = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n' + url)}`;
+    window.open(mailto, '_blank');
+  };
+
+  const startVoice = () => {
+    const SR: any = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    if (!SR) return;
+    const r = new SR();
+    r.lang = 'es-ES';
+    r.interimResults = true;
+    setListening(true);
+    r.onresult = (e: any) => {
+      const t = Array.from(e.results).map((res: any) => res[0].transcript).join(' ');
+      setAiQuery(t);
+    };
+    r.onend = () => setListening(false);
+    r.start();
+  };
+
+  const deleteDocument = async (id: number) => {
+    try {
+      const resp = await apiService.deleteDocument(String(id));
+      if (!resp.error) {
+        setDocuments(prev => prev.filter(d => d.id !== id));
+      }
+    } catch {}
   };
 
   return (
@@ -86,19 +170,38 @@ const Inbox = () => {
           </p>
         </div>
 
-        {/* Search and Filters */}
+        {/* AI Input */}
         <div className="mb-8 space-y-4">
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Buscar facturas, notas o tickets..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="input-modern w-full pl-12"
-            />
+          <div className="p-4 rounded-xl border bg-card">
+            <div className="flex items-center gap-3">
+              <Square className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold text-foreground">Pregúntale a tu archivador</h3>
+            </div>
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <input
+                type="text"
+                value={aiQuery}
+                onChange={(e) => setAiQuery(e.target.value)}
+                placeholder="Ej.: ¿Cuánto he pagado este año en impuestos?"
+                className="input-modern flex-1 min-w-[220px]"
+              />
+              <button
+                onClick={startVoice}
+                className={`btn-secondary p-2 ${listening ? 'opacity-80' : ''}`}
+                title="Hablar"
+              >
+                <Mic className={`w-4 h-4 ${listening ? 'text-red-500' : ''}`} />
+              </button>
+              <button
+                onClick={() => navigate(`/app/search?q=${encodeURIComponent(aiQuery)}`)}
+                className="btn-hero px-3 py-2 text-sm"
+              >
+                Buscar
+              </button>
+            </div>
           </div>
+
+          {/* Filtros */}
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
@@ -111,6 +214,7 @@ const Inbox = () => {
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground hover:bg-muted"
                 }`}
+                title={filter !== 'Todos' ? `${availableTags.find(t => t.tag.toLowerCase() === filter.toLowerCase())?.count || 0} documentos` : ''}
               >
                 {filter}
               </button>
@@ -152,48 +256,47 @@ const Inbox = () => {
             {filteredDocs.map((doc, index) => (
               <div
                 key={doc.id}
-                className="card-soft hover:shadow-medium transition-all duration-200 scale-in"
+                className={`card-soft hover:shadow-medium transition-all duration-200 scale-in border ${getDocumentStyles(doc).cardClass}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start gap-4">
                   {/* Document Icon */}
                   <div className="flex-shrink-0 mt-1">
-                    {getDocumentIcon(doc.tags)}
+                    <FileText className={`w-5 h-5 ${getDocumentStyles(doc).iconClass}`} />
                   </div>
 
                   {/* Document Info */}
                   <div className="flex-grow min-w-0">
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <h3 className="font-semibold text-foreground truncate">
-                        {doc.name}
+                        {doc.filename}
                       </h3>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span className="text-sm text-muted-foreground flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
-                          {formatDate(doc.savedAt)}
+                          {formatDate(doc.created_at)}
                         </span>
                       </div>
                     </div>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-3">
-                      {doc.tags.map((tag, tagIndex) => (
-                        <span
+                      {(doc.tags || '').split(',').filter(Boolean).map((tag, tagIndex) => (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedFilter(tag.charAt(0).toUpperCase() + tag.slice(1))}
                           key={tagIndex}
-                          className={`tag text-xs ${
+                          className={`tag text-xs cursor-pointer ${
                             tag.toLowerCase().includes('factura') ? 'tag-factura' :
                             tag.toLowerCase().includes('ticket') ? 'tag-ticket' : 'tag-nota'
                           }`}
                         >
                           {tag}
-                        </span>
+                        </button>
                       ))}
                     </div>
 
-                    {/* Excerpt */}
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                      {doc.extractedText.slice(0, 150)}...
-                    </p>
+                    {/* Excerpt removed intentionally */}
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
@@ -203,6 +306,13 @@ const Inbox = () => {
                       >
                         <Eye className="w-4 h-4" />
                         Ver completo
+                      </button>
+                      <button 
+                        onClick={() => shareDocument(doc)}
+                        className="btn-ghost text-sm flex items-center gap-1"
+                      >
+                        <Share2 className="w-4 h-4" />
+                        Compartir
                       </button>
                       <button 
                         onClick={() => deleteDocument(doc.id)}

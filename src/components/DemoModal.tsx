@@ -31,7 +31,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
       <div className="bg-card rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-border">
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-2xl font-bold text-foreground">Demo en vivo - Zerlo.ai</h2>
+            <h2 className="text-2xl font-bold text-foreground">Demo en vivo - Flecsa</h2>
             <p className="text-muted-foreground">Descubre cómo funciona la búsqueda inteligente</p>
           </div>
           <button
@@ -135,7 +135,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
               <div className="opacity-0 animate-[fade-in_0.8s_ease-out_0.8s_forwards]">
                 <h3 className="text-2xl font-bold text-foreground mb-2">¡Impresionante!</h3>
                 <p className="text-muted-foreground">
-                  Zerlo encontró tus documentos y calculó el total automáticamente. 
+                  Flecsa encontró tus documentos y calculó el total automáticamente. 
                   <br />
                   Todo en segundos, sin buscar en carpetas.
                 </p>
@@ -151,7 +151,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                   onClick={onClose}
                   className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Empezar con Zerlo
+                  Empezar con Flecsa
                 </button>
               </div>
             </div>

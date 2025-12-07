@@ -1,14 +1,35 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload as UploadIcon, Camera, FileText, Lightbulb, Eye, Frame } from "lucide-react";
+import { Upload as UploadIcon, Camera, FileText, Lightbulb, Eye, Frame, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { apiService } from "@/services/api";
 
 const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading, updateUser } = useAuth();
+
+  // Show minimal loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin" />
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!isAuthenticated) {
+    navigate('/');
+    return null;
+  }
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -54,18 +75,57 @@ const Upload = () => {
     setPreviewUrls(prev => prev.filter((_, i) => i !== index));
   };
 
-  const processDocuments = () => {
-    if (selectedFiles.length > 0) {
-      // Store files info in localStorage for demo
-      const documentsToProcess = selectedFiles.map((file, index) => ({
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        id: `${Date.now()}-${index}`
-      }));
+  const processDocuments = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setIsUploading(true);
+    setError("");
+    setUploadProgress(0);
+
+    try {
+      let completed = 0;
+      for (const file of selectedFiles) {
+        const result = await apiService.uploadDocument(file);
+        if (result.error) {
+          // Friendly message for unsupported/unprocessed files
+          throw new Error(`No se pudo procesar "${file.name}". Intenta con otro formato.`);
+        }
+        completed += 1;
+        // suave: animar en pasos pequeños
+        const target = Math.round((completed / selectedFiles.length) * 100);
+        const current = uploadProgress;
+        const step = current < target ? 1 : 0;
+        if (step) {
+          for (let p = current; p <= target; p += 1) {
+            await new Promise(r => setTimeout(r, 15));
+            setUploadProgress(p);
+          }
+        } else {
+          setUploadProgress(target);
+        }
+      }
       
-      localStorage.setItem('documentsToProcess', JSON.stringify(documentsToProcess));
-      navigate('/app/process');
+      // Clear selected files
+      setSelectedFiles([]);
+      setPreviewUrls([]);
+      
+      // Update storage usage locally so the header shows new %
+      if (user) {
+        const totalSize = selectedFiles.reduce((acc, f) => acc + f.size, 0);
+        updateUser({
+          ...user,
+          storageUsed: user.storageUsed + totalSize,
+        });
+      }
+      
+      // Quedarse en la página y mostrar confirmación breve
+      await new Promise(r => setTimeout(r, 400));
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error subiendo documentos');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -80,7 +140,43 @@ const Upload = () => {
           <p className="text-xl text-muted-foreground">
             Selecciona un documento para que la IA lo organice automáticamente
           </p>
+          
+          {/* Storage info */}
+          {user && (
+            <div className="mt-4 p-4 bg-muted/50 rounded-lg inline-block">
+              <p className="text-sm text-muted-foreground">
+                Almacenamiento usado: {((user.storageUsed / 1024 / 1024 / 1024) * 100).toFixed(1)}% 
+                ({(user.storageUsed / 1024 / 1024).toFixed(1)} MB / {(user.storageLimit / 1024 / 1024 / 1024).toFixed(1)} GB)
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* Error display */}
+        {error && (
+          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {/* Upload progress */}
+        {isUploading && (
+          <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-lg">
+            <div className="flex items-center gap-3 mb-2">
+              <Loader2 className="w-5 h-5 animate-spin text-primary" />
+              <span className="font-medium">Subiendo documentos...</span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              {uploadProgress.toFixed(0)}% completado
+            </p>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Upload Area */}
@@ -137,11 +233,23 @@ const Upload = () => {
                         setPreviewUrls([]);
                       }}
                       className="btn-secondary"
+                      disabled={isUploading}
                     >
                       Limpiar todo
                     </button>
-                    <button onClick={processDocuments} className="btn-hero">
-                      Procesar {selectedFiles.length} documento{selectedFiles.length > 1 ? 's' : ''}
+                    <button 
+                      onClick={processDocuments} 
+                      className="btn-hero"
+                      disabled={isUploading}
+                    >
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Subiendo...
+                        </>
+                      ) : (
+                        `Procesar ${selectedFiles.length} documento${selectedFiles.length > 1 ? 's' : ''}`
+                      )}
                     </button>
                   </div>
                 </div>
@@ -174,9 +282,9 @@ const Upload = () => {
                     </button>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mt-4">
-                    Formatos soportados: JPG, PNG, PDF (máx. 20MB)
-                  </p>
+          <p className="text-sm text-muted-foreground mt-4">
+            Todos los formatos de archivo (máx. 1GB)
+          </p>
                 </div>
               )}
             </div>
@@ -185,7 +293,6 @@ const Upload = () => {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*,.pdf"
               multiple
               onChange={handleFileInput}
               className="hidden"
