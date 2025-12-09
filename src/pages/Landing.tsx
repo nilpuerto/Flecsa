@@ -16,6 +16,10 @@ import cardImage from "@/assets/dc8d2d44-140a-4df3-8738-bb84ad9c2c3f.jpg";
 import cardImage2 from "@/assets/26dccfd9-0706-4e98-b512-ab6b854d3831.jpg";
 import cardImage3 from "@/assets/560a2840-0e90-4e3d-9e4f-68290091bdb6.jpg";
 import paperIcon from "@/assets/paper.png";
+import blender3dImage from "@/assets/3dblender.png";
+import earthImage from "@/assets/earth.png";
+import flecsaLogo from "@/assets/flecsa_logo.png";
+import whiteFlecsaLogo from "@/assets/white_flecsa.png";
 
 // Instagram Icon Component
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -316,13 +320,41 @@ const ComparisonSlider = () => {
     { name: 'random_data.csv', type: 'file' },
   ];
 
-  // AI organized structure
+  // AI organized structure with different colors
   const aiFolders = [
-    { name: 'Finance', count: 12, icon: DollarSign, subFolders: ['Invoices', 'Receipts', 'Taxes'] },
-    { name: 'Legal', count: 8, icon: Scale, subFolders: ['Contracts', 'Agreements'] },
-    { name: 'Home', count: 15, icon: Home, subFolders: ['Bills', 'Warranties'] },
-    { name: 'Work', count: 5, icon: Briefcase, subFolders: ['Projects', 'Reports'] },
+    { name: 'Finance', count: 12, icon: DollarSign, subFolders: ['Invoices', 'Receipts', 'Taxes'], color: 'emerald' },
+    { name: 'Legal', count: 8, icon: Scale, subFolders: ['Contracts', 'Agreements'], color: 'purple' },
+    { name: 'Home', count: 15, icon: Home, subFolders: ['Bills', 'Warranties'], color: 'amber' },
+    { name: 'Work', count: 5, icon: Briefcase, subFolders: ['Projects', 'Reports'], color: 'orange' },
   ];
+
+  // Color mapping for folders
+  const folderColors: Record<string, { bg: string; border: string; iconBg: string; icon: string }> = {
+    emerald: {
+      bg: 'from-emerald-50 to-emerald-100/50',
+      border: 'border-emerald-200 hover:border-emerald-300',
+      iconBg: 'bg-emerald-100 group-hover:bg-emerald-200',
+      icon: 'text-emerald-600'
+    },
+    purple: {
+      bg: 'from-purple-50 to-purple-100/50',
+      border: 'border-purple-200 hover:border-purple-300',
+      iconBg: 'bg-purple-100 group-hover:bg-purple-200',
+      icon: 'text-purple-600'
+    },
+    amber: {
+      bg: 'from-amber-50 to-amber-100/50',
+      border: 'border-amber-200 hover:border-amber-300',
+      iconBg: 'bg-amber-100 group-hover:bg-amber-200',
+      icon: 'text-amber-600'
+    },
+    orange: {
+      bg: 'from-orange-50 to-orange-100/50',
+      border: 'border-orange-200 hover:border-orange-300',
+      iconBg: 'bg-orange-100 group-hover:bg-orange-200',
+      icon: 'text-orange-600'
+    },
+  };
 
   return (
     <div 
@@ -393,7 +425,11 @@ const ComparisonSlider = () => {
           <div className="mb-2 sm:mb-4">
             <div className="flex items-center justify-between mb-2 sm:mb-3">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <h3 className="text-slate-900 text-sm sm:text-lg md:text-xl font-normal font-['Montserrat'] select-none">Flecsa AI Inbox</h3>
+                <img 
+                  src={flecsaLogo} 
+                  alt="Flecsa" 
+                  className="h-8 sm:h-9 md:h-10 lg:h-12 w-auto select-none"
+                />
                 <div className="bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-normal font-['Montserrat'] border border-primary/20 select-none">AI</div>
               </div>
               <div className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-['Montserrat'] select-none">40 files</div>
@@ -423,13 +459,14 @@ const ComparisonSlider = () => {
           <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-4 flex-shrink-0">
             {aiFolders.map((folder, index) => {
               const IconComponent = folder.icon;
+              const colors = folderColors[folder.color] || folderColors.emerald;
               return (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-white to-slate-50 rounded-lg sm:rounded-xl p-2 sm:p-3 border-2 border-primary/20 hover:border-primary/40 transition-all hover:shadow-md group"
+                  className={`bg-gradient-to-br ${colors.bg} rounded-lg sm:rounded-xl p-2 sm:p-3 border-2 ${colors.border} transition-all hover:shadow-md group`}
                 >
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-lg mb-1.5 sm:mb-2 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 ${colors.iconBg} rounded-lg mb-1.5 sm:mb-2 flex items-center justify-center transition-colors`}>
+                    <IconComponent className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.icon}`} />
                   </div>
                   <div className="text-slate-900 font-normal text-[10px] sm:text-xs md:text-sm font-['Montserrat'] select-none">{folder.name}</div>
                   <div className="text-slate-500 text-[9px] sm:text-xs font-['Montserrat'] select-none">{folder.count} files</div>
@@ -526,8 +563,6 @@ const Landing = () => {
   const [isWorkSectionVisible, setIsWorkSectionVisible] = useState(false);
   const [comparisonSectionRef, setComparisonSectionRef] = useState<HTMLDivElement | null>(null);
   const [isComparisonSectionVisible, setIsComparisonSectionVisible] = useState(false);
-  const [waitlistSectionRef, setWaitlistSectionRef] = useState<HTMLDivElement | null>(null);
-  const [isWaitlistSectionVisible, setIsWaitlistSectionVisible] = useState(false);
   const faqSectionRef = useRef<HTMLDivElement>(null);
   const [isFaqSectionVisible, setIsFaqSectionVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -539,9 +574,6 @@ const Landing = () => {
   const [contactForm, setContactForm] = useState({ email: '', message: '' });
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const [contactSuccess, setContactSuccess] = useState(false);
-  const [waitlistEmail, setWaitlistEmail] = useState('');
-  const [isWaitlistSubmitting, setIsWaitlistSubmitting] = useState(false);
-  const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   
   // Get language from localStorage or browser
   useEffect(() => {
@@ -609,9 +641,6 @@ const Landing = () => {
             if (entry.target === comparisonSectionRef) {
               setIsComparisonSectionVisible(true);
             }
-            if (entry.target === waitlistSectionRef) {
-              setIsWaitlistSectionVisible(true);
-            }
             if (entry.target === faqSectionRef.current) {
               setIsFaqSectionVisible(true);
             }
@@ -627,9 +656,6 @@ const Landing = () => {
     if (comparisonSectionRef) {
       observer.observe(comparisonSectionRef);
     }
-    if (waitlistSectionRef) {
-      observer.observe(waitlistSectionRef);
-    }
     if (faqSectionRef.current) {
       observer.observe(faqSectionRef.current);
     }
@@ -641,14 +667,11 @@ const Landing = () => {
       if (comparisonSectionRef) {
         observer.unobserve(comparisonSectionRef);
       }
-      if (waitlistSectionRef) {
-        observer.unobserve(waitlistSectionRef);
-      }
       if (faqSectionRef.current) {
         observer.unobserve(faqSectionRef.current);
       }
     };
-  }, [workSectionRef, comparisonSectionRef, waitlistSectionRef]);
+  }, [workSectionRef, comparisonSectionRef]);
 
   const tSync = (key: string): string => {
     return translations[selectedLanguage]?.[key] || translations['es'][key] || key;
@@ -759,48 +782,87 @@ const Landing = () => {
                   animation: 'blur-in-right 0.6s ease-out 0.3s forwards',
                   opacity: 0,
                   willChange: 'opacity, transform' as any,
-                  left: '8%',
-                  top: '-10%',
+                  left: '-2%',
+                  top: '-35%',
+                  position: 'absolute',
                 } as React.CSSProperties}
               >
                 <img 
                   src={phoneImage} 
                   alt="Flecsa app on iPhone" 
-                  className="w-[280px] sm:w-[380px] md:w-[480px] h-auto lg:w-[570px] xl:w-[670px]"
+                  className="h-auto"
                   style={{ 
                     transformOrigin: 'center',
-                  }}
+                    width: '390px',
+                  } as React.CSSProperties}
                 />
             </div>
               <style>{`
+                #phone-mobile-container {
+                  top: -35% !important;
+                  left: -2% !important;
+                  position: absolute !important;
+                }
                 @media (max-width: 639px) {
                   #phone-mobile-container {
-                    top: -5% !important;
-                    left: 8% !important;
+                    top: -30% !important;
+                    left: -3% !important;
+                    position: absolute !important;
+                  }
+                  #phone-mobile-container img {
+                    width: 420px !important;
+                    min-width: 420px !important;
+                    max-width: 420px !important;
                   }
                 }
-                @media (min-width: 640px) {
+                @media (min-width: 640px) and (max-width: 767px) {
                   #phone-mobile-container {
-                    top: -13% !important;
-                    left: 7% !important;
+                    top: -35% !important;
+                    left: -4% !important;
+                    position: absolute !important;
+                  }
+                  #phone-mobile-container img {
+                    width: 550px !important;
+                    min-width: 550px !important;
+                    max-width: 550px !important;
                   }
                 }
                 @media (min-width: 768px) and (max-width: 1023px) {
                   #phone-mobile-container {
-                    top: -22% !important;
-                    left: 50% !important;
-                    transform: translateX(-43%) !important;
+                    top: -45% !important;
+                    left: 42% !important;
+                    transform: translateX(-48%) !important;
+                    position: absolute !important;
                   }
                   #phone-mobile-container img {
-                    width: 380px !important;
-                    max-width: 380px !important;
+                    width: 650px !important;
+                    min-width: 650px !important;
+                    max-width: 650px !important;
                   }
                 }
                 @media (min-width: 1024px) {
                   #phone-mobile-container {
-                    left: 12% !important;
-                    top: -19% !important;
+                    left: 0% !important;
+                    top: -35% !important;
                     transform: none !important;
+                    position: absolute !important;
+                  }
+                  #phone-mobile-container img {
+                    width: 560px !important;
+                    min-width: 560px !important;
+                    max-width: 560px !important;
+                  }
+                }
+                @media (min-width: 1280px) {
+                  #phone-mobile-container {
+                    left: 0% !important;
+                    top: -35% !important;
+                    position: absolute !important;
+                  }
+                  #phone-mobile-container img {
+                    width: 610px !important;
+                    min-width: 610px !important;
+                    max-width: 610px !important;
                   }
                 }
               `}</style>
@@ -808,23 +870,34 @@ const Landing = () => {
                 @media (max-width: 639px) {
                   #contract-label {
                     top: 70% !important;
-                    left: 16% !important;
+                    left: -20% !important;
+                    right: auto !important;
+                    position: absolute !important;
+                    transform: none !important;
+                    margin-left: 0 !important;
+                    padding-left: 0 !important;
+                  }
+                  #contract-label > div {
+                    transform: scale(0.9) translateX(-30px) !important;
                   }
                   #insights-label {
                     top: 30% !important;
                     left: -2% !important;
                   }
                   #products-label {
-                    right: 0% !important;
-                    top: 30% !important;
+                    right: -45% !important;
                     left: auto !important;
+                    top: 30% !important;
+                    position: absolute !important;
+                    transform: none !important;
+                    margin-right: 0 !important;
                   }
                   #products-label > div {
-                    transform: translateX(20px) scale(0.9) !important;
+                    transform: translateX(50px) scale(0.9) !important;
                   }
                   #summer-label {
                     top: 63% !important;
-                    right: 7% !important;
+                    right: -3% !important;
                   }
                 }
                 #contract-label {
@@ -883,7 +956,7 @@ const Landing = () => {
                     transform: scale(0.85) !important;
                   }
                   #summer-label {
-                    right: 12% !important;
+                    right: 15% !important;
                     bottom: 20% !important;
                   }
                   #summer-label > div {
@@ -891,6 +964,10 @@ const Landing = () => {
                   }
                 }
                 @media (min-width: 1024px) {
+                  #summer-label {
+                    right: 4% !important;
+                    bottom: 23% !important;
+                  }
                   #contract-label {
                     left: 14% !important;
                     top: 67% !important;
@@ -900,7 +977,8 @@ const Landing = () => {
                     top: 27% !important;
                   }
                   #products-label {
-                    right: 10% !important;
+                    right: 18% !important;
+                    left: auto !important;
                   }
                 }
               `}</style>
@@ -1013,7 +1091,7 @@ const Landing = () => {
           {/* Professional Cards Design - Below the box, in line */}
           <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 w-full">
             {/* Card 1: No manual work needed */}
-            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
+            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-6 lg:px-6 lg:py-8 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
               animation: 'fadeInLeft 1.2s ease-out 0.5s forwards',
               opacity: 0,
               willChange: 'opacity, transform' as any
@@ -1030,18 +1108,18 @@ const Landing = () => {
                 <img src={cardImage} alt="" className="w-full h-full object-cover rounded-2xl sm:rounded-3xl scale-[2.5] group-hover:scale-[2.6] transition-transform duration-500" />
                   </div>
                 
-              <div className="relative z-10 flex flex-col gap-4 sm:gap-6 h-full">
+              <div className="relative z-10 flex flex-col gap-2 sm:gap-3 lg:gap-2 h-full">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Bot className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 lg:w-8 lg:h-8 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Bot className="w-5 h-5 lg:w-4 lg:h-4 text-primary" />
                     </div>
                 {/* Title */}
-                <h3 className="text-slate-900 text-xl sm:text-2xl lg:text-3xl font-bold font-['Montserrat'] tracking-tight group-hover:text-slate-800 transition-colors">No manual work needed</h3>
+                <h3 className="text-slate-900 text-xl sm:text-2xl lg:text-xl font-bold font-['Montserrat'] tracking-tight group-hover:text-slate-800 transition-colors">No manual work needed</h3>
                 {/* Description */}
-                <p className="text-slate-600 text-xs sm:text-sm lg:text-base font-['Montserrat'] leading-relaxed">Everything is controlled by AI. No manual work required — fully automated document management.</p>
+                <p className="text-slate-600 text-sm sm:text-base lg:text-base font-['Montserrat'] leading-relaxed">Everything is controlled by AI. No manual work required — fully automated document management.</p>
                 {/* CTA Button - aligned at bottom */}
                 <div className="flex items-center gap-2 mt-auto">
-                  <button className="bg-slate-900 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-800 hover:scale-105 transition-all duration-300 font-['Montserrat']">
+                  <button className="bg-slate-900 text-white px-3 py-1.5 sm:px-4 sm:py-2 lg:px-3 lg:py-1.5 rounded-xl font-semibold text-xs sm:text-sm lg:text-xs hover:bg-slate-800 hover:scale-105 transition-all duration-300 font-['Montserrat']">
                     Effortless Automation
                   </button>
                     </div>
@@ -1049,7 +1127,7 @@ const Landing = () => {
               </div>
               
             {/* Card 2: Organized in real time */}
-            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
+            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-6 lg:px-6 lg:py-8 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{ 
               animation: 'fadeInUp 1.2s ease-out 0.6s forwards',
               opacity: 0,
               willChange: 'opacity, transform' as any
@@ -1065,18 +1143,18 @@ const Landing = () => {
                 <img src={cardImage2} alt="" className="w-full h-full object-cover rounded-2xl sm:rounded-3xl scale-[2.5] group-hover:scale-[2.6] transition-transform duration-500" />
                     </div>
                     
-              <div className="relative z-10 flex flex-col gap-4 sm:gap-6 h-full">
+              <div className="relative z-10 flex flex-col gap-2 sm:gap-3 lg:gap-2 h-full">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Zap className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 lg:w-8 lg:h-8 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Zap className="w-5 h-5 lg:w-4 lg:h-4 text-primary" />
                         </div>
                 {/* Title */}
-                <h3 className="text-slate-900 text-xl sm:text-2xl lg:text-3xl font-bold font-['Montserrat'] tracking-tight group-hover:text-slate-800 transition-colors">Organized in real time automatically</h3>
+                <h3 className="text-slate-900 text-xl sm:text-2xl lg:text-xl font-bold font-['Montserrat'] tracking-tight group-hover:text-slate-800 transition-colors">Organized in real time</h3>
                 {/* Description */}
-                <p className="text-slate-600 text-xs sm:text-sm lg:text-base font-['Montserrat'] leading-relaxed">Everything happens in real-time. Watch as your documents organize themselves instantly.</p>
+                <p className="text-slate-600 text-sm sm:text-base lg:text-base font-['Montserrat'] leading-relaxed">Everything happens in real-time. Watch as your documents organize themselves instantly.</p>
                 {/* CTA Button - aligned at bottom */}
                 <div className="flex items-center gap-2 mt-auto">
-                  <button className="bg-slate-900 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-800 hover:scale-105 transition-all duration-300 font-['Montserrat']">
+                  <button className="bg-slate-900 text-white px-3 py-1.5 sm:px-4 sm:py-2 lg:px-3 lg:py-1.5 rounded-xl font-semibold text-xs sm:text-sm lg:text-xs hover:bg-slate-800 hover:scale-105 transition-all duration-300 font-['Montserrat']">
                     Real-Time Sync
                   </button>
                       </div>
@@ -1084,7 +1162,7 @@ const Landing = () => {
                       </div>
 
             {/* Card 3: Search documents with AI */}
-            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{
+            <div className="relative bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-2xl sm:rounded-3xl px-4 py-5 sm:px-6 sm:py-6 lg:px-6 lg:py-8 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 group overflow-hidden flex-1 border border-slate-200/50 cursor-pointer" style={{
               animation: 'fadeInRight 1.2s ease-out 0.7s forwards',
               opacity: 0,
               willChange: 'opacity, transform' as any
@@ -1101,18 +1179,18 @@ const Landing = () => {
                 <img src={cardImage3} alt="" className="w-full h-full object-cover rounded-2xl sm:rounded-3xl scale-[2.5] group-hover:scale-[2.6] transition-transform duration-500" />
                 </div>
                 
-              <div className="relative z-10 flex flex-col gap-4 sm:gap-6 h-full">
+              <div className="relative z-10 flex flex-col gap-2 sm:gap-3 lg:gap-2 h-full">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Search className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 lg:w-8 lg:h-8 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Search className="w-5 h-5 lg:w-4 lg:h-4 text-primary" />
                 </div>
                 {/* Title */}
-                <h3 className="text-slate-900 text-xl sm:text-2xl lg:text-3xl font-bold font-['Montserrat'] tracking-tight group-hover:text-slate-800 transition-colors">Search documents with AI</h3>
+                <h3 className="text-slate-900 text-xl sm:text-2xl lg:text-xl font-bold font-['Montserrat'] tracking-tight group-hover:text-slate-800 transition-colors">Search documents with AI</h3>
                 {/* Description */}
-                <p className="text-slate-600 text-xs sm:text-sm lg:text-base font-['Montserrat'] leading-relaxed">Find any document instantly. Search by content, keywords, or ask the AI to find what you need.</p>
+                <p className="text-slate-600 text-sm sm:text-base lg:text-base font-['Montserrat'] leading-relaxed">Find any document instantly. Search by content, keywords, or ask the AI to find what you need.</p>
                 {/* CTA Button - aligned at bottom */}
                 <div className="flex items-center gap-2 mt-auto">
-                  <button className="bg-slate-900 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-800 hover:scale-105 transition-all duration-300 font-['Montserrat']">
+                  <button className="bg-slate-900 text-white px-3 py-1.5 sm:px-4 sm:py-2 lg:px-3 lg:py-1.5 rounded-xl font-semibold text-xs sm:text-sm lg:text-xs hover:bg-slate-800 hover:scale-105 transition-all duration-300 font-['Montserrat']">
                     AI Search
                   </button>
                 </div>
@@ -1137,7 +1215,7 @@ const Landing = () => {
           }}
         >
           {/* Badge */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-start mb-6">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5">
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-primary text-sm font-normal font-['Montserrat']">AI-Powered Organization</span>
@@ -1145,17 +1223,17 @@ const Landing = () => {
           </div>
           
           {/* Title and Subtitle with more visual interest */}
-          <div className="text-center mb-12 sm:mb-16 md:mb-20">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal text-slate-900 leading-tight font-['Montserrat'] mb-4">
-              <span className="block sm:inline">Traditional inbox vs</span>
-              <span className="block sm:inline"> <span className="font-bold text-primary">AI-powered</span> inbox</span>
+          <div className="text-left mb-12 sm:mb-16 md:mb-20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-normal text-slate-900 leading-tight font-['Montserrat'] mb-4 max-w-2xl">
+              <span className="block">Traditional inbox vs</span>
+              <span className="block"><span className="font-bold text-primary">AI-powered</span> inbox</span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 font-['Montserrat'] max-w-2xl mx-auto mb-6">
-              See the difference between managing files the old way and the Flecsa way
+            <p className="text-base sm:text-lg md:text-lg text-slate-600 font-['Montserrat'] max-w-xl mb-6">
+              See the difference between managing files the old way and the Flecsa way. Experience how AI transforms document organization from chaos to clarity.
             </p>
             
             {/* Stats */}
-            <div className="flex flex-wrap justify-center gap-6 sm:gap-8 mt-8">
+            <div className="flex flex-wrap gap-4 sm:gap-6 mt-6">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                 <span className="text-slate-600 text-sm font-['Montserrat']">40 files organized today</span>
@@ -1179,299 +1257,126 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Work Calm Section */}
+      {/* Features Cards Section */}
       <section
         ref={(el) => setWorkSectionRef(el as HTMLDivElement)}
-        className="relative bg-slate-50 py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden"
+        className="relative bg-slate-50 pt-4 sm:pt-6 md:pt-8 lg:pt-10 pb-12 sm:pb-16 md:pb-20 lg:pb-24 overflow-hidden"
       >
-        
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
-            {/* Left Side - Image with AI overlay */}
-            <div 
-              className="relative order-2 lg:order-1"
-              style={{
-                animation: isWorkSectionVisible ? 'blur-in-right 0.8s ease-out forwards' : 'none',
-                opacity: isWorkSectionVisible ? 1 : 0
+              {/* Section Header */}
+          <div className="mb-8 sm:mb-12 md:mb-16">
+            <h2 
+              className="text-2xl sm:text-3xl md:text-4xl font-normal text-slate-900 font-['Montserrat']"
+              style={{ 
+                animation: isWorkSectionVisible ? 'fadeInUp 1.2s ease-out 0.1s forwards' : 'none',
+                opacity: 0,
+                willChange: 'opacity, transform' as any
               }}
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500">
-                {workImageUrl ? (
-                  <img 
-                    src={workImageUrl} 
-                    alt="Person working calmly" 
-                    className="w-full h-[300px] sm:h-[400px] lg:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[450px] bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100"></div>
-                )}
-                
-                {/* AI Components Overlay */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {/* Search bar component - Smaller on mobile */}
-                  <div className="absolute top-4 right-4 sm:top-8 sm:right-8 bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-4 sm:py-3 shadow-xl border border-slate-200 max-w-[120px] sm:max-w-[200px] md:max-w-[240px] animate-bounce-subtle" style={{ animationDelay: '0s' }}>
-                    <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-                      <Search className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-primary" />
-                      <span className="text-[8px] sm:text-xs text-slate-600 font-['Montserrat']">AI Search</span>
-                  </div>
-                    <div className="text-[8px] sm:text-xs text-slate-900 font-['Montserrat'] font-medium">Find docs...</div>
-                  </div>
-                        
-                  {/* Arrow from search to computer */}
-                  <svg className="absolute top-12 right-12 sm:top-16 sm:right-20 w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20" style={{ transform: 'rotate(-45deg)' }}>
-                    <path d="M 0 0 L 20 20" stroke="#0a73ff" strokeWidth="1.5" fill="none" strokeDasharray="3,3" opacity="0.7" className="sm:stroke-[2]" />
-                    <path d="M 16 16 L 20 20 L 16 24" stroke="#0a73ff" strokeWidth="1.5" fill="none" opacity="0.7" className="sm:stroke-[2]" />
-                  </svg>
-                  
-                  {/* File organization card - Smaller on mobile */}
-                  <div className="absolute bottom-8 left-3 sm:bottom-12 sm:left-6 bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 shadow-xl border border-slate-200 max-w-[100px] sm:max-w-[160px] md:max-w-[180px] animate-bounce-subtle" style={{ animationDelay: '0.3s' }}>
-                    <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
-                      <Folder className="w-2 h-2 sm:w-3 sm:h-3 text-primary" />
-                      <span className="text-[8px] sm:text-[10px] text-primary font-['Montserrat'] font-medium">Auto-organized</span>
-                    </div>
-                    <div className="text-[7px] sm:text-[10px] text-slate-600 font-['Montserrat']">40 files</div>
-                  </div>
-                  
-                  {/* Arrow from organization to computer */}
-                  <svg className="absolute bottom-16 left-6 sm:bottom-20 sm:left-12 w-6 h-6 sm:w-12 sm:h-12 md:w-16 md:h-16" style={{ transform: 'rotate(45deg)' }}>
-                    <path d="M 0 15 L 12 3" stroke="#0a73ff" strokeWidth="1.5" fill="none" strokeDasharray="3,3" opacity="0.7" className="sm:stroke-[2]" />
-                    <path d="M 9 6 L 12 3 L 15 6" stroke="#0a73ff" strokeWidth="1.5" fill="none" opacity="0.7" className="sm:stroke-[2]" />
-                  </svg>
-                  
-                  {/* AI tag - Smaller on mobile */}
-                  <div className="absolute top-12 left-3 sm:top-20 sm:left-6 bg-primary/90 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3 sm:py-1.5 shadow-lg animate-bounce-subtle" style={{ animationDelay: '0.6s' }}>
-                    <div className="flex items-center gap-1 sm:gap-1.5">
-                      <Bot className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                      <span className="text-[8px] sm:text-[10px] text-white font-['Montserrat'] font-medium">AI</span>
-                  </div>
-            </div>
-                  
-                  {/* Arrow from AI tag to computer */}
-                  <svg className="absolute top-20 left-6 sm:top-28 sm:left-12 w-5 h-5 sm:w-10 sm:h-10 md:w-14 md:h-14" style={{ transform: 'rotate(20deg)' }}>
-                    <path d="M 0 0 L 12 10" stroke="#0a73ff" strokeWidth="1.5" fill="none" strokeDasharray="3,3" opacity="0.7" className="sm:stroke-[2]" />
-                    <path d="M 9 8 L 12 10 L 9 12" stroke="#0a73ff" strokeWidth="1.5" fill="none" opacity="0.7" className="sm:stroke-[2]" />
-                  </svg>
+              <span className="block">Work seamlessly across</span>
+              <span className="block"><span className="font-bold text-primary">all platforms</span></span>
+            </h2>
           </div>
-            </div>
-          </div>
-
-            {/* Right Side - Content */}
+          
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+            {/* Card 1: Devices */}
             <div 
-              className="flex flex-col gap-4 sm:gap-5 order-1 lg:order-2"
+              className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-slate-200 hover:shadow-2xl transition-all duration-500 group"
               style={{
-                animation: isWorkSectionVisible ? 'fadeInRight 1.2s ease-out 0.3s forwards' : 'none',
+                animation: isWorkSectionVisible ? 'fadeInLeft 1.2s ease-out 0.3s forwards' : 'none',
                 opacity: isWorkSectionVisible ? 1 : 0,
                 willChange: 'opacity, transform' as any
               }}
             >
-              {/* Badge - Minimalist */}
-              <div className="inline-flex items-center gap-1.5 bg-primary/5 border border-primary/10 rounded-full px-3 py-1 w-fit">
-                <Sparkles className="w-3 h-3 text-primary" />
-                <span className="text-primary text-xs font-normal font-['Montserrat']">Available Everywhere</span>
-                  </div>
-
-              {/* Main Title - Smaller and more emotional */}
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-normal text-slate-900 leading-tight font-['Montserrat']">
-                Work finally feels <span className="font-bold text-primary">calm</span>
-            </h2>
-
-              {/* Description - Smaller */}
-              <p className="text-sm sm:text-base md:text-lg text-slate-600 font-['Montserrat'] leading-relaxed max-w-md">
-                Access your organized documents from any device. Flecsa works seamlessly across all your devices, keeping everything in sync.
-              </p>
-
-              {/* Devices Icons - Smaller and minimalist */}
-              <div className="flex items-center gap-3 sm:gap-4 mt-3">
-                <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
-                  <Smartphone className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
-                  <span className="text-slate-600 text-xs font-['Montserrat']">Mobile</span>
-        </div>
-                <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
-                  <Laptop className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
-                  <span className="text-slate-600 text-xs font-['Montserrat']">Desktop</span>
-          </div>
-                <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
-                  <Monitor className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
-                  <span className="text-slate-600 text-xs font-['Montserrat']">Tablet</span>
-                </div>
-              </div>
-
-              {/* Stats - Smaller */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-5 mt-3">
-                <div className="flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-primary" />
-                  <span className="text-slate-600 text-xs sm:text-sm font-['Montserrat']">Sync across devices</span>
-                    </div>
-                <div className="flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-primary" />
-                  <span className="text-slate-600 text-xs sm:text-sm font-['Montserrat']">Always accessible</span>
-                  </div>
-                <div className="flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-primary" />
-                  <span className="text-slate-600 text-xs sm:text-sm font-['Montserrat']">Secure & private</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Join Waitlist Section */}
-      <section 
-        ref={(el) => {
-          if (el && !waitlistSectionRef) setWaitlistSectionRef(el as HTMLDivElement);
-        }}
-        className="relative bg-slate-50 py-16 sm:py-20 md:py-24 lg:py-28"
-      >
-        <div 
-          className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-4xl"
-          style={{
-            opacity: isWaitlistSectionVisible ? 1 : 0,
-            willChange: 'opacity' as any
-          }}
-        >
-          {/* Badge */}
-          <div 
-            className="flex justify-center mb-6"
-            style={{
-              animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.1s forwards' : 'none',
-              opacity: 0,
-              willChange: 'opacity, transform' as any
-            }}
-          >
-            <div className="relative inline-flex items-center gap-2 bg-slate-900 rounded-full px-4 py-2 overflow-hidden">
-              {/* Glowing blue effect */}
-              <div className="absolute inset-0 bg-primary/20 blur-xl animate-pulse"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-shine-simple"></div>
-              <div className="relative z-10 w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <span className="relative z-10 text-white text-xs sm:text-sm font-medium uppercase tracking-wider font-['Montserrat']">Available in Early 2026</span>
-            </div>
-          </div>
-
-          {/* Title */}
-          <h2 
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 text-center mb-4 font-['Montserrat']"
-            style={{
-              animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.3s forwards' : 'none',
-              opacity: 0,
-              willChange: 'opacity, transform' as any
-            }}
-          >
-            Join the waitlist
-            </h2>
-
-          {/* Description */}
-          <p 
-            className="text-base sm:text-lg md:text-xl text-slate-600 text-center mb-8 sm:mb-10 max-w-2xl mx-auto font-['Montserrat']"
-            style={{
-              animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.5s forwards' : 'none',
-              opacity: 0,
-              willChange: 'opacity, transform' as any
-            }}
-          >
-            Flecsa launches in early 2026. Join the waitlist now and get one month free at launch.
-          </p>
-
-          {/* Email Form */}
-          {!waitlistSuccess ? (
-            <form 
-              onSubmit={async (e) => {
-                e.preventDefault();
-                if (!waitlistEmail || !waitlistEmail.includes('@')) {
-                  return;
-                }
-
-                setIsWaitlistSubmitting(true);
-
-                try {
-                  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-                  const response = await fetch(`${apiUrl}/api/early-access/request`, {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: waitlistEmail }),
-                  });
-
-                  if (response.ok) {
-                    setWaitlistSuccess(true);
-                    setWaitlistEmail('');
-                    setTimeout(() => setWaitlistSuccess(false), 3000);
-                  } else {
-                    throw new Error('Failed to send email');
-                  }
-                } catch (error) {
-                  console.error('Error sending waitlist email:', error);
-                  // Show success anyway for better UX
-                  setWaitlistSuccess(true);
-                  setWaitlistEmail('');
-                  setTimeout(() => setWaitlistSuccess(false), 3000);
-                } finally {
-                  setIsWaitlistSubmitting(false);
-                }
-              }}
-              className="max-w-lg mx-auto"
-              style={{
-                animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.7s forwards' : 'none',
-                opacity: 0,
-                willChange: 'opacity, transform' as any
-              }}
-            >
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={waitlistEmail}
-                  onChange={(e) => setWaitlistEmail(e.target.value)}
-                  required
-                  disabled={isWaitlistSubmitting}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 pr-24 sm:pr-28 text-slate-900 placeholder:text-slate-400 focus:outline-none font-['Montserrat'] text-sm sm:text-base bg-white border border-slate-300 rounded-full shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              {/* Visual Content - 3D Blender image */}
+              <div className="relative h-[300px] sm:h-[350px] lg:h-[400px] bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src={blender3dImage} 
+                  alt="3D Devices" 
+                  className="w-full h-full object-contain p-4"
                 />
-                <button
-                  type="submit"
-                  disabled={isWaitlistSubmitting || !waitlistEmail}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 px-5 sm:px-6 py-2 sm:py-2.5 bg-primary text-white font-semibold rounded-full hover:bg-primary/90 transition-colors font-['Montserrat'] text-sm sm:text-base whitespace-nowrap shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isWaitlistSubmitting ? (
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  ) : (
-                    'Join waitlist'
-                  )}
-                </button>
-              </div>
-            </form>
-          ) : (
+                        </div>
+              
+              {/* Content below visual */}
+              <div className="p-6 sm:p-8">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 font-['Montserrat']">
+                  Access from any device
+                </h3>
+                <p className="text-slate-600 text-sm sm:text-base mb-6 font-['Montserrat'] leading-relaxed">
+                  Your documents are always in sync across all your devices. Work seamlessly on mobile, tablet, or desktop.
+                </p>
+                
+                {/* Device labels - 3 mini labels */}
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
+                    <Smartphone className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
+                    <span className="text-slate-600 text-xs font-['Montserrat']">Mobile</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
+                    <Laptop className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
+                    <span className="text-slate-600 text-xs font-['Montserrat']">Desktop</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-2 group hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
+                    <Monitor className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" />
+                    <span className="text-slate-600 text-xs font-['Montserrat']">Tablet</span>
+            </div>
+          </div>
+            </div>
+          </div>
+
+            {/* Card 2: Multi-language */}
             <div 
-              className="max-w-lg mx-auto text-center"
+              className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-slate-200 hover:shadow-2xl transition-all duration-500 group"
               style={{
-                animation: isWaitlistSectionVisible ? 'fadeInUp 1.2s ease-out 0.7s forwards' : 'none',
-                opacity: 0,
+                animation: isWorkSectionVisible ? 'fadeInRight 1.2s ease-out 0.5s forwards' : 'none',
+                opacity: isWorkSectionVisible ? 1 : 0,
                 willChange: 'opacity, transform' as any
               }}
             >
-              <div className="bg-primary/10 border border-primary/30 rounded-full px-6 py-3 inline-flex items-center gap-2">
-                <Check className="w-5 h-5 text-primary" />
-                <span className="text-primary font-semibold font-['Montserrat']">You're on the waitlist!</span>
-            </div>
-                </div>
-          )}
+              {/* Visual Content - Earth image */}
+              <div className="relative h-[300px] sm:h-[350px] lg:h-[400px] bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center overflow-hidden">
+                <img 
+                  src={earthImage} 
+                  alt="Multi-language support" 
+                  className="w-full h-full object-contain p-4"
+                />
               </div>
+
+              {/* Content below visual */}
+              <div className="p-6 sm:p-8">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 font-['Montserrat']">
+                  Works in your language
+                </h3>
+                <p className="text-slate-600 text-sm sm:text-base mb-6 font-['Montserrat'] leading-relaxed">
+                  Flecsa understands and works in over 20 languages. Search and organize documents in any language you prefer.
+                </p>
+                <Link
+                  to="/community"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full font-semibold text-sm hover:bg-slate-800 transition-colors font-['Montserrat'] group"
+                >
+                  Explore
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* FAQ Section */}
       <section 
         ref={faqSectionRef}
-        className="relative bg-slate-50 py-8 sm:py-12 md:py-16 lg:py-20"
+        className="relative bg-slate-50 pt-4 sm:pt-6 md:pt-8 lg:pt-10 pb-16 sm:pb-20 md:pb-24 lg:pb-28"
       >
         <div 
-          className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-4xl lg:max-w-5xl"
+          className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 pt-0 sm:pt-2"
           style={{
             opacity: isFaqSectionVisible ? 1 : 0,
             willChange: 'opacity' as any
           }}
         >
           <h2 
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-slate-900 mb-6 sm:mb-8 font-['Montserrat']"
+            className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4 sm:mb-6 font-['Montserrat']"
             style={{
               animation: isFaqSectionVisible ? 'fadeInUp 1.2s ease-out 0.1s forwards' : 'none',
               opacity: 0,
@@ -1495,11 +1400,11 @@ const Landing = () => {
                 willChange: 'opacity, transform' as any
               }}
             >
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-lg lg:text-base xl:text-lg hover:no-underline">
                 How does Flecsa work?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
-                Flecsa is free to use with monthly credits included. You get free credits each month to organize files and use AI search. If you need more, you can upgrade to a paid plan for additional credits and features.
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-base lg:text-sm xl:text-base pb-3 sm:pb-4">
+                Flecsa uses AI to automatically organize your files. Just upload your documents or photos, and Flecsa analyzes, tags, and categorizes everything. Then you can find any file instantly using natural-language search.
               </AccordionContent>
             </AccordionItem>
 
@@ -1512,10 +1417,10 @@ const Landing = () => {
                 willChange: 'opacity, transform' as any
               }}
             >
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-lg lg:text-base xl:text-lg hover:no-underline">
                 How does Flecsa protect my privacy?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-base lg:text-sm xl:text-base pb-3 sm:pb-4">
                 Your data is fully encrypted. Files are never used to train AI models, and we don't sell or share your information.
               </AccordionContent>
             </AccordionItem>
@@ -1529,10 +1434,10 @@ const Landing = () => {
                 willChange: 'opacity, transform' as any
               }}
             >
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-lg lg:text-base xl:text-lg hover:no-underline">
                 Do I need to install anything?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-base lg:text-sm xl:text-base pb-3 sm:pb-4">
                 No — Flecsa works directly in your browser. Just sign in and start uploading.
               </AccordionContent>
             </AccordionItem>
@@ -1546,10 +1451,10 @@ const Landing = () => {
                 willChange: 'opacity, transform' as any
               }}
             >
-              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-xl hover:no-underline">
+              <AccordionTrigger className="text-left font-['Montserrat'] text-slate-900 font-normal py-3 sm:py-4 text-base sm:text-lg md:text-lg lg:text-base xl:text-lg hover:no-underline">
                 What happens when I run out of credits?
               </AccordionTrigger>
-              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-lg pb-3 sm:pb-4">
+              <AccordionContent className="text-slate-600 font-['Montserrat'] text-sm sm:text-base md:text-base lg:text-sm xl:text-base pb-3 sm:pb-4">
                 You can still upload files normally. Automatic organization and AI search will pause until your credits renew next month.
               </AccordionContent>
             </AccordionItem>
@@ -1558,7 +1463,7 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white mt-16 lg:mt-24 relative overflow-hidden">
+      <footer className="bg-slate-900 text-white relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
@@ -1568,20 +1473,21 @@ const Landing = () => {
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 py-12 sm:py-16 lg:py-20">
             {/* Brand Column */}
             <div className="lg:col-span-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">F</span>
-              </div>
-                <span className="text-2xl font-bold text-white font-['Montserrat']">Flecsa</span>
-            </div>
+              <div className="flex items-center gap-2 mb-4 -ml-2">
+                <img 
+                  src={whiteFlecsaLogo} 
+                  alt="Flecsa" 
+                  className="h-16 sm:h-18 md:h-20 lg:h-24 w-auto"
+                />
+                </div>
               <p className="text-slate-300 text-sm font-['Montserrat'] mb-6 max-w-sm">
                 Organize your documents with AI-powered intelligence. Never search for a file again.
               </p>
               <div className="flex items-center gap-2 text-slate-400 text-sm font-['Montserrat']">
                 <Mail className="w-4 h-4" />
                 <a href="mailto:support@flecsa.com" className="hover:text-primary transition-colors">support@flecsa.com</a>
-          </div>
-        </div>
+              </div>
+              </div>
 
             {/* Links Columns */}
             <div className="lg:col-span-2">
@@ -1603,7 +1509,7 @@ const Landing = () => {
                   </Link>
                 </li>
               </ul>
-          </div>
+              </div>
 
             <div className="lg:col-span-2">
               <h4 className="font-semibold text-white mb-4 font-['Montserrat']">Company</h4>
@@ -1614,7 +1520,7 @@ const Landing = () => {
                   </Link>
                 </li>
               </ul>
-          </div>
+            </div>
 
             <div className="lg:col-span-2">
               <h4 className="font-semibold text-white mb-4 font-['Montserrat']">Legal</h4>
@@ -1635,7 +1541,7 @@ const Landing = () => {
                   </a>
                 </li>
               </ul>
-        </div>
+          </div>
 
             {/* Contact Support Column */}
             <div className="lg:col-span-2">

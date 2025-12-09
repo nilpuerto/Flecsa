@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { User, Menu, X, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import flecsaLogo from "@/assets/flecsa_logo.png";
 
 const Navbar = () => {
   const location = useLocation();
@@ -39,20 +40,26 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200/40 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200/40 transition-all duration-300 shadow-sm ${
         isScrolled 
-          ? "bg-white/80 backdrop-blur-md shadow-sm" 
+          ? "bg-white/80 backdrop-blur-md" 
           : "bg-white"
       }`}
     >
       <div className="w-full px-2 md:container md:mx-auto md:px-6 lg:px-12 xl:px-16">
-        <div className="flex items-center justify-between h-12 sm:h-14 md:h-16 w-full max-w-full">
+        <div className={`flex items-center justify-between h-12 sm:h-14 md:h-14 lg:h-14 w-full max-w-full transition-opacity duration-300 ${
+          isMobileMenuOpen ? 'md:opacity-100 opacity-0 pointer-events-none md:pointer-events-auto' : 'opacity-100'
+        }`}>
           {/* Logo - Left */}
           <Link 
             to="/" 
-            className="text-lg sm:text-xl md:text-2xl font-medium text-slate-900 hover:text-slate-700 transition-colors tracking-wide antialiased subpixel-antialiased"
+            className="flex items-center h-full"
           >
-            Flecsa
+            <img 
+              src={flecsaLogo} 
+              alt="Flecsa" 
+              className="h-14 sm:h-11 md:h-12 lg:h-14 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation Links and User Icon - Right */}
@@ -61,11 +68,12 @@ const Navbar = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm md:text-base font-medium tracking-wide transition-colors antialiased subpixel-antialiased ${
+                className={`text-sm md:text-sm lg:text-sm font-medium tracking-wide transition-colors antialiased ${
                   location.pathname === link.path
                     ? "text-slate-900"
                     : "text-slate-700 hover:text-slate-900"
                 }`}
+                style={{ textRendering: 'optimizeLegibility', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}
               >
                 {link.label}
               </Link>
@@ -81,13 +89,6 @@ const Navbar = () => {
 
           {/* Mobile Menu Button and User Icon */}
           <div className="flex md:hidden items-center gap-1">
-            <Link
-              to="/app"
-              className="text-slate-700 hover:text-slate-900 transition-colors flex-shrink-0"
-              aria-label="User profile"
-            >
-              <User className="w-5 h-5 stroke-[1.5]" />
-            </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-slate-700 hover:text-slate-900 transition-colors p-1"
@@ -133,13 +134,18 @@ const Navbar = () => {
           <div className="relative z-10 flex flex-col min-h-full">
             {/* Header section */}
             <div className="px-4 pt-6 pb-4 border-b border-slate-200/40">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">F</span>
-                  </div>
-                  <span className="text-lg font-semibold text-slate-900">Flecsa</span>
-                </div>
+              <div className="flex items-center justify-between mb-2">
+                <Link 
+                  to="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center"
+                >
+                  <img 
+                    src={flecsaLogo} 
+                    alt="Flecsa" 
+                    className="h-16 w-auto"
+                  />
+                </Link>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 rounded-full hover:bg-slate-100 transition-colors"
@@ -147,7 +153,7 @@ const Navbar = () => {
                   <X className="w-5 h-5 text-slate-700" />
                 </button>
               </div>
-              <p className="text-xs text-slate-600 font-['Montserrat']">Organize your documents with AI</p>
+              <p className="text-sm text-slate-600 font-['Montserrat']">Organize your documents with AI</p>
             </div>
 
             {/* Navigation Links */}

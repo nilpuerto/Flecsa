@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/services/api";
 import CreditsDisplay from "@/components/CreditsDisplay";
+import flecsaLogo from "@/assets/flecsa_logo.png";
 
 const AppShell = () => {
   const location = useLocation();
@@ -112,10 +113,11 @@ const AppShell = () => {
         <div className="flex items-center gap-4">
           {/* Logo and Name */}
           <Link to="/app" className="flex items-center space-x-2 md:space-x-2.5">
-            <div className="w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xs md:text-sm">F</span>
-            </div>
-            <span className="text-lg md:text-xl font-bold text-slate-900">Flecsa</span>
+            <img 
+              src={flecsaLogo} 
+              alt="Flecsa" 
+              className="h-9 w-auto md:h-10"
+            />
           </Link>
         </div>
 
