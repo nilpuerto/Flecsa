@@ -765,14 +765,14 @@ const Landing = () => {
             
             {/* Right Side - Phone with floating labels */}
             <div className="relative w-full lg:w-auto lg:flex-1 overflow-visible mt-8 sm:mt-0">
-              {/* White Box */}
-              <div className="relative h-[300px] sm:h-[350px] md:h-[300px] lg:h-[400px] rounded-3xl overflow-hidden z-10">
+              {/* White Box - Hidden/Transparent */}
+              <div className="relative h-[300px] sm:h-[350px] md:h-[300px] lg:h-[400px] rounded-3xl overflow-hidden z-10 opacity-0 pointer-events-none">
                 {/* Main White Background */}
-                <div className="absolute inset-0 bg-slate-50 rounded-3xl"></div>
+                <div className="absolute inset-0 bg-transparent rounded-3xl"></div>
         </div>
         
-              {/* Mask layer that aligns with the box bottom - responsive */}
-              <div className="absolute bottom-0 left-0 right-0 h-[300px] sm:h-[350px] md:h-[300px] lg:h-[400px] bg-slate-50 rounded-3xl z-20 pointer-events-none"></div>
+              {/* Mask layer that aligns with the box bottom - responsive - Hidden */}
+              <div className="absolute bottom-0 left-0 right-0 h-[300px] sm:h-[350px] md:h-[300px] lg:h-[400px] bg-transparent rounded-3xl z-20 pointer-events-none opacity-0"></div>
               
               {/* iPhone Mockup - Centered, slightly to the right, top part outside (3D effect) */}
               <div 
@@ -806,7 +806,7 @@ const Landing = () => {
                 @media (max-width: 639px) {
                   #phone-mobile-container {
                     top: -30% !important;
-                    left: -3% !important;
+                    left: -8% !important;
                     position: absolute !important;
                   }
                   #phone-mobile-container img {
@@ -818,7 +818,7 @@ const Landing = () => {
                 @media (min-width: 640px) and (max-width: 767px) {
                   #phone-mobile-container {
                     top: -35% !important;
-                    left: -4% !important;
+                    left: -8% !important;
                     position: absolute !important;
                   }
                   #phone-mobile-container img {
@@ -829,15 +829,15 @@ const Landing = () => {
                 }
                 @media (min-width: 768px) and (max-width: 1023px) {
                   #phone-mobile-container {
-                    top: -45% !important;
-                    left: 42% !important;
+                    top: -50% !important;
+                    left: 38% !important;
                     transform: translateX(-48%) !important;
                     position: absolute !important;
                   }
                   #phone-mobile-container img {
-                    width: 650px !important;
-                    min-width: 650px !important;
-                    max-width: 650px !important;
+                    width: 480px !important;
+                    min-width: 480px !important;
+                    max-width: 480px !important;
                   }
                 }
                 @media (min-width: 1024px) {
@@ -870,7 +870,7 @@ const Landing = () => {
                 @media (max-width: 639px) {
                   #contract-label {
                     top: 70% !important;
-                    left: -20% !important;
+                    left: -25% !important;
                     right: auto !important;
                     position: absolute !important;
                     transform: none !important;
@@ -882,10 +882,10 @@ const Landing = () => {
                   }
                   #insights-label {
                     top: 30% !important;
-                    left: -2% !important;
+                    left: 0% !important;
                   }
                   #products-label {
-                    right: -45% !important;
+                    right: -50% !important;
                     left: auto !important;
                     top: 30% !important;
                     position: absolute !important;
@@ -902,54 +902,54 @@ const Landing = () => {
                 }
                 #contract-label {
                   top: 65% !important;
-                  left: 16% !important;
+                  left: 11% !important;
                 }
                 #insights-label {
                   top: 25% !important;
-                  left: -2% !important;
+                  left: 0% !important;
                 }
                 #products-label {
-                  right: 14% !important;
+                  right: 19% !important;
                 }
                 @media (min-width: 640px) {
                   #contract-label {
-                    left: 18% !important;
+                    left: 13% !important;
                     top: 66% !important;
                   }
                   #insights-label {
-                    left: 8% !important;
+                    left: 6% !important;
                     top: 26% !important;
                   }
                   #products-label {
-                    right: 10% !important;
+                    right: 15% !important;
                   }
                 }
                 @media (min-width: 768px) and (max-width: 1023px) {
                   #phone-mobile-container {
-                    left: 50% !important;
-                    top: -20% !important;
+                    left: 48% !important;
+                    top: -50% !important;
                     transform: translateX(-43%) !important;
                   }
                   #phone-mobile-container img {
-                    width: 380px !important;
-                    max-width: 380px !important;
+                    width: 480px !important;
+                    max-width: 480px !important;
                   }
                   #contract-label {
-                    left: 31% !important;
+                    left: 26% !important;
                     top: 62% !important;
                   }
                   #contract-label > div {
                     transform: scale(0.85) !important;
                   }
                   #insights-label {
-                    left: 25% !important;
+                    left: 23% !important;
                     top: 22% !important;
                   }
                   #insights-label > div {
                     transform: scale(0.85) !important;
                   }
                   #products-label {
-                    right: 18% !important;
+                    right: 23% !important;
                     top: 12% !important;
                   }
                   #products-label > div {
@@ -969,15 +969,15 @@ const Landing = () => {
                     bottom: 23% !important;
                   }
                   #contract-label {
-                    left: 14% !important;
+                    left: 9% !important;
                     top: 67% !important;
                   }
                   #insights-label {
-                    left: 6% !important;
+                    left: 4% !important;
                     top: 27% !important;
                   }
                   #products-label {
-                    right: 18% !important;
+                    right: 12% !important;
                     left: auto !important;
                   }
                 }
@@ -1479,15 +1479,15 @@ const Landing = () => {
                   alt="Flecsa" 
                   className="h-16 sm:h-18 md:h-20 lg:h-24 w-auto"
                 />
-                </div>
+              </div>
               <p className="text-slate-300 text-sm font-['Montserrat'] mb-6 max-w-sm">
                 Organize your documents with AI-powered intelligence. Never search for a file again.
               </p>
               <div className="flex items-center gap-2 text-slate-400 text-sm font-['Montserrat']">
                 <Mail className="w-4 h-4" />
                 <a href="mailto:support@flecsa.com" className="hover:text-primary transition-colors">support@flecsa.com</a>
-              </div>
-              </div>
+            </div>
+                </div>
 
             {/* Links Columns */}
             <div className="lg:col-span-2">
@@ -1520,7 +1520,7 @@ const Landing = () => {
                   </Link>
                 </li>
               </ul>
-            </div>
+              </div>
 
             <div className="lg:col-span-2">
               <h4 className="font-semibold text-white mb-4 font-['Montserrat']">Legal</h4>
