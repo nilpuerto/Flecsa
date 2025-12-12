@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Mail, Check, Sparkles } from "lucide-react";
+import { X, Mail, Check, Sparkles, AlertCircle } from "lucide-react";
 
 interface EarlyAccessModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +20,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
     }
 
     setIsSubmitting(true);
+    setError(null);
 
     try {
       // Send email automatically via your backend API
@@ -31,9 +33,14 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
         body: JSON.stringify({ email }),
       });
 
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Unable to send request');
+      }
+
       const data = await response.json();
 
-      if (response.ok && data.success) {
+      if (data.success) {
         setIsSubmitting(false);
         setIsSuccess(true);
         setTimeout(() => {
@@ -42,18 +49,21 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
           onClose();
         }, 2000);
       } else {
-        throw new Error(data.error || 'Failed to send email');
+        throw new Error(data.error || 'Unable to send request');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending early access request:', error);
-      // Fallback: Show success anyway (user experience)
       setIsSubmitting(false);
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-        setEmail("");
-        onClose();
-      }, 2000);
+      
+      // Friendly error messages
+      let errorMessage = 'Unable to send your request. Please try again later.';
+      if (error.message && !error.message.includes('fetch')) {
+        errorMessage = error.message;
+      } else if (error.message?.includes('fetch') || error.name === 'TypeError') {
+        errorMessage = 'Unable to connect to the server. Please check your connection and try again.';
+      }
+      
+      setError(errorMessage);
     }
   };
 
@@ -128,7 +138,7 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
             Be among the first to experience Flecsa. Enter your email and we'll notify you when we launch.
           </p>
 
-          {!isSuccess ? (
+          {!isSuccess && !error ? (
             <form 
               onSubmit={handleSubmit} 
               className="space-y-3 sm:space-y-4"
@@ -143,7 +153,10 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setError(null);
+                  }}
                   placeholder="Enter your email"
                   required
                   className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-['Montserrat'] text-sm sm:text-base text-slate-900 placeholder:text-slate-400"
@@ -168,6 +181,40 @@ const EarlyAccessModal = ({ isOpen, onClose }: EarlyAccessModalProps) => {
                 )}
               </button>
             </form>
+          ) : error ? (
+            <div 
+              className="text-center py-6 sm:py-8"
+              style={{ 
+                animation: 'fadeIn 0.4s ease-out 0.3s forwards', 
+                opacity: 0 
+              }}
+            >
+              <div className="flex justify-center mb-4 sm:mb-6">
+                <div className="relative">
+                  {/* Outer glow */}
+                  <div className="absolute inset-0 bg-red-500/30 rounded-full blur-xl animate-pulse"></div>
+                  {/* Main container */}
+                  <div className="relative bg-red-500 p-4 sm:p-5 rounded-full shadow-xl">
+                    <AlertCircle className="relative w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={3} />
+                  </div>
+                </div>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 font-['Montserrat']">
+                Something went wrong
+              </h3>
+              <p className="text-sm sm:text-base text-slate-600 font-['Montserrat'] mb-4">
+                {error}
+              </p>
+              <button
+                onClick={() => {
+                  setError(null);
+                  setEmail("");
+                }}
+                className="w-full py-2.5 sm:py-3 bg-primary text-white font-semibold text-sm sm:text-base rounded-xl hover:bg-primary/90 transition-all font-['Montserrat']"
+              >
+                Try again
+              </button>
+            </div>
           ) : (
             <div 
               className="text-center py-6 sm:py-8"

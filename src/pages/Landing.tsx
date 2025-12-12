@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { Upload, Search, Calendar, ArrowRight, Camera, FileText, Tags, Star, Clock, Shield, Smartphone, Quote, Check, Zap, Database, Sparkles, Menu, X, Volume2, Headphones, SlidersHorizontal, Mail, Globe, ChevronDown, File, Sparkles as SparklesIcon, Zap as ZapIcon, Clock as ClockIcon, Bot, Gauge, FileCheck, ArrowRight as ArrowRightIcon, Download, Monitor, Folder, Archive, DollarSign, Scale, Home, Briefcase, Tablet, Laptop } from "lucide-react";
+import { Upload, Search, Calendar, ArrowRight, Camera, FileText, Tags, Star, Clock, Shield, Smartphone, Quote, Check, Zap, Database, Sparkles, Menu, X, Volume2, Headphones, SlidersHorizontal, Mail, Globe, ChevronDown, File, Sparkles as SparklesIcon, Zap as ZapIcon, Clock as ClockIcon, Bot, Gauge, FileCheck, ArrowRight as ArrowRightIcon, Download, Monitor, Folder, Archive, DollarSign, Scale, Home, Briefcase, Tablet, Laptop, AlertCircle } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import LoginModal from "@/components/LoginModal";
 import DemoModal from "@/components/DemoModal";
@@ -574,6 +574,7 @@ const Landing = () => {
   const [contactForm, setContactForm] = useState({ email: '', message: '' });
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const [contactSuccess, setContactSuccess] = useState(false);
+  const [contactError, setContactError] = useState<string | null>(null);
   
   // Get language from localStorage or browser
   useEffect(() => {
@@ -1552,11 +1553,12 @@ const Landing = () => {
                 <h4 className="font-semibold text-white font-['Montserrat']">Get Support</h4>
           </div>
 
-              {!contactSuccess ? (
+              {!contactSuccess && !contactError ? (
                 <form 
                   onSubmit={async (e) => {
                     e.preventDefault();
                     setIsContactSubmitting(true);
+                    setContactError(null);
                     try {
                       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
                       const response = await fetch(`${apiUrl}/api/contact/support`, {
@@ -1568,16 +1570,30 @@ const Landing = () => {
                         })
                       });
                       if (response.ok) {
-                        setContactSuccess(true);
-                        setContactForm({ email: '', message: '' });
-                        setTimeout(() => setContactSuccess(false), 3000);
+                        const data = await response.json();
+                        if (data.success) {
+                          setContactSuccess(true);
+                          setContactForm({ email: '', message: '' });
+                          setTimeout(() => setContactSuccess(false), 3000);
+                        } else {
+                          throw new Error(data.message || 'Unable to send message');
+                        }
+                      } else {
+                        const data = await response.json().catch(() => ({}));
+                        throw new Error(data.message || 'Unable to send message');
                       }
-                    } catch (error) {
+                    } catch (error: any) {
                       console.error('Error sending contact form:', error);
-                      // Show success anyway for better UX
-                      setContactSuccess(true);
-                      setContactForm({ email: '', message: '' });
-                      setTimeout(() => setContactSuccess(false), 3000);
+                      
+                      // Friendly error messages
+                      let errorMessage = 'Unable to send your message. Please try again later.';
+                      if (error.message && !error.message.includes('fetch')) {
+                        errorMessage = error.message;
+                      } else if (error.message?.includes('fetch') || error.name === 'TypeError') {
+                        errorMessage = 'Unable to connect to the server. Please check your connection and try again.';
+                      }
+                      
+                      setContactError(errorMessage);
                     } finally {
                       setIsContactSubmitting(false);
                     }
@@ -1585,11 +1601,14 @@ const Landing = () => {
                   className="space-y-2.5"
                 >
                   <div className="relative">
-                <input
-                  type="email"
+                    <input
+                      type="email"
                       placeholder="Email"
                       value={contactForm.email}
-                      onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                      onChange={(e) => {
+                        setContactForm({...contactForm, email: e.target.value});
+                        setContactError(null);
+                      }}
                       required
                       className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white text-xs placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-['Montserrat']"
                     />
@@ -1598,7 +1617,10 @@ const Landing = () => {
                     <textarea
                       placeholder="Message"
                       value={contactForm.message}
-                      onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                      onChange={(e) => {
+                        setContactForm({...contactForm, message: e.target.value});
+                        setContactError(null);
+                      }}
                       required
                       rows={2}
                       className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white text-xs placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 resize-none font-['Montserrat']"
@@ -1622,6 +1644,23 @@ const Landing = () => {
                     )}
             </button>
               </form>
+              ) : contactError ? (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-center">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                    <p className="text-xs text-red-500 font-semibold font-['Montserrat']">Error</p>
+                  </div>
+                  <p className="text-xs text-slate-300 font-['Montserrat'] mb-2">{contactError}</p>
+                  <button
+                    onClick={() => {
+                      setContactError(null);
+                      setContactForm({ email: '', message: '' });
+                    }}
+                    className="text-xs text-red-400 hover:text-red-300 font-['Montserrat'] underline"
+                  >
+                    Try again
+                  </button>
+                </div>
               ) : (
                 <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-center">
                   <div className="flex items-center justify-center gap-2 mb-1">
