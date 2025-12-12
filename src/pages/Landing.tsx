@@ -753,13 +753,42 @@ const Landing = () => {
 
                 {/* Button below description */}
               <button 
-                onClick={() => setIsEarlyAccessModalOpen(true)}
-                className="relative mt-4 sm:mt-5 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-full overflow-hidden group transition-all duration-300 font-['Montserrat'] self-start shadow-xl shadow-primary/40 hover:scale-[1.02]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Button clicked - opening modal');
+                  setIsEarlyAccessModalOpen(true);
+                }}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Touch start - opening modal');
+                  setIsEarlyAccessModalOpen(true);
+                }}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Touch end - opening modal');
+                  setIsEarlyAccessModalOpen(true);
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Mouse down - opening modal');
+                  setIsEarlyAccessModalOpen(true);
+                }}
+                className="relative mt-4 sm:mt-5 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-full overflow-hidden group transition-all duration-300 font-['Montserrat'] self-start shadow-xl shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] z-[9999] touch-manipulation"
+                style={{ 
+                  touchAction: 'manipulation',
+                  position: 'relative',
+                  zIndex: 9999,
+                  WebkitTapHighlightColor: 'transparent'
+                }}
               >
                   {/* Subtle continuous shine effect - optimized for mobile */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine-simple"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine-simple pointer-events-none"></div>
                   {/* Button text */}
-                  <span className="relative z-10">Get early access</span>
+                  <span className="relative z-10 pointer-events-none">Get early access</span>
               </button>
             </div>
           </div>
@@ -778,7 +807,7 @@ const Landing = () => {
               {/* iPhone Mockup - Centered, slightly to the right, top part outside (3D effect) */}
               <div 
                 id="phone-mobile-container"
-                className="absolute z-30"
+                className="absolute z-30 pointer-events-none"
                 style={{ 
                   animation: 'blur-in-right 0.6s ease-out 0.3s forwards',
                   opacity: 0,
